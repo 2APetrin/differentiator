@@ -1,20 +1,12 @@
 digraph
 {
-    node_0x603000000130[shape = Mrecord, label = "{{0x603000000130} | {type = 0} | {value = 28} | {(nil) | (nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x603000000040[shape = Mrecord, label = "{{0x603000000040} | {type = 0} | {value = 12} | {(nil) | (nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x603000000070[shape = Mrecord, label = "{{0x603000000070} | {type = 0} | {value = 13} | {(nil) | (nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x6030000000a0[shape = Mrecord, label = "{{0x6030000000a0} | {type = 1} | {value = 0} | {0x603000000040 | 0x603000000070}}", style = "filled", fillcolor = "#8CCB5E"];
-    node_0x6030000000d0[shape = Mrecord, label = "{{0x6030000000d0} | {type = 0} | {value = -14} | {(nil) | (nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x603000000100[shape = Mrecord, label = "{{0x603000000100} | {type = 3} | {value = 0} | {0x6030000000a0 | 0x6030000000d0}}", style = "filled", fillcolor = "#E28090"];
-    node_0x603000000160[shape = Mrecord, label = "{{0x603000000160} | {type = 2} | {value = 0} | {0x603000000130 | 0x603000000100}}", style = "filled", fillcolor = "#8CCB5E"];
-    node_0x603000000190[shape = Mrecord, label = "{{0x603000000190} | {type = 0} | {value = 1.43} | {(nil) | (nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x6030000001c0[shape = Mrecord, label = "{{0x6030000001c0} | {type = 2} | {value = 0} | {0x603000000160 | 0x603000000190}}", style = "filled", fillcolor = "#8CCB5E"];
-    node_0x6030000001c0->node_0x603000000160 [color = "#F80000"];
-    node_0x603000000160->node_0x603000000130 [color = "#F80000"];
-    node_0x603000000160->node_0x603000000100 [color = "#F80000"];
-    node_0x603000000100->node_0x6030000000a0 [color = "#F80000"];
-    node_0x6030000000a0->node_0x603000000040 [color = "#F80000"];
-    node_0x6030000000a0->node_0x603000000070 [color = "#F80000"];
-    node_0x603000000100->node_0x6030000000d0 [color = "#F80000"];
-    node_0x6030000001c0->node_0x603000000190 [color = "#F80000"];
+    node_0x604000000150[shape = Mrecord, label = "{{0x604000000150} | {num} | {value = 28} | {(nil) | (nil)}}", style = "filled", fillcolor = "#FAEEDD"];
+    node_0x604000000110[shape = Mrecord, label = "{{0x604000000110} | {*} | {value = 0} | {(nil) | (nil)}}", style = "filled", fillcolor = "#E28090"];
+    node_0x604000000190[shape = Mrecord, label = "{{0x604000000190} | {-} | {value = 0} | {0x604000000150 | 0x604000000110}}", style = "filled", fillcolor = "#8CCB5E"];
+    node_0x6040000001d0[shape = Mrecord, label = "{{0x6040000001d0} | {num} | {value = 1.43} | {(nil) | (nil)}}", style = "filled", fillcolor = "#FAEEDD"];
+    node_0x604000000210[shape = Mrecord, label = "{{0x604000000210} | {/} | {value = 0} | {0x604000000190 | 0x6040000001d0}}", style = "filled", fillcolor = "#E28090"];
+    node_0x604000000210->node_0x604000000190 [color = "#F80000"];
+    node_0x604000000190->node_0x604000000150 [color = "#F80000"];
+    node_0x604000000190->node_0x604000000110 [color = "#F80000"];
+    node_0x604000000210->node_0x6040000001d0 [color = "#F80000"];
 }

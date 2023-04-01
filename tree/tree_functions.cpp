@@ -47,6 +47,9 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
 
         new_node->right_child = node2;
         new_node->left_child  = node1;
+
+        node1->parent = new_node;
+        node2->parent = new_node;
         new_node->type        = type;
 
         return new_node;
@@ -64,6 +67,7 @@ int tree_dtor(tree_t * tree)
     tree_dump(tree);
 
     tree_free(tree->root);
+        
     tree->status = 0;
     tree->tree_info.file = NULL;
     tree->tree_info.func = NULL;
@@ -89,9 +93,43 @@ int tree_free(node_t * node)
         tree_free(node->right_child);
     }
 
-    node->value = 0;
-
     free(node);
+
     return 0;
 }
 
+
+node_t * new_num(elem value)
+{
+    return create_node(TYPE_NUM, value);
+}
+
+
+node_t * new_op(node_type type, node_t * node1, node_t * node2)
+{
+    return create_node(type, null_val, node1, node2);
+}
+
+
+int delete_subtree_or_node(node_t * node)
+{
+    ASSERT(node);
+
+    if (node->parent->left_child == node)
+    {
+        node->parent->left_child = NULL;
+        tree_free(node);
+
+        return 0;
+    }
+
+    else if (node->parent->right_child == node)
+    {
+        node->parent->right_child = NULL;
+        tree_free(node);
+
+        return 0;
+    }
+    
+    return 1;
+}

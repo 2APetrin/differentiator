@@ -16,6 +16,7 @@
     }
 
     #define tree_dump(tree) tree_dump_((tree), {LOCATION})
+    #define subtree_dump(root) subtree_dump_((root), {LOCATION})
 
 
     //! @brief log_file
@@ -115,3 +116,18 @@ int graphviz_add_node(node_t * node);
 //! @return code of needed color and 0 if error
 //!
 int get_color(node_type type);
+
+
+//! @brief deshifrates node type to string
+//!
+const char * get_type(node_type type);
+
+
+//! @brief verifies our tree
+//!
+int tree_verify(tree_t * tree);
+
+
+//! @brief writes dump of subtree into log file
+//!
+int subtree_dump_(node_t * root, location_info info);

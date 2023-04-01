@@ -15,18 +15,18 @@ typedef double elem;
 
 //! @brief val when operator is added in create node function
 //!
-const int null_val = 0xBBBB; 
+const int null_val = 0xDEAD; 
 
 
 //! @brief types of tree nodes
 //!
 enum node_type
 {
-    NUM    = 0,
-    OP_ADD = 1,
-    OP_SUB = 2,
-    OP_MUL = 3,
-    OP_DIV = 4
+    TYPE_NUM = 0,
+    OP_ADD   = 1,
+    OP_SUB   = 2,
+    OP_MUL   = 3,
+    OP_DIV   = 4
 };
 
 
@@ -36,6 +36,7 @@ typedef struct node
 {
     node *    left_child;
     node *    right_child;
+    node *    parent;
     elem      value;
     node_type type;
 } node_t;
@@ -114,3 +115,24 @@ int tree_dtor(tree_t * tree);
 //! @brief frees tree reccurently
 //!
 int tree_free(node_t * node);
+
+
+//! @brief creates num node
+//! 
+node_t * new_num(elem value);
+
+
+//! @brief creates num node
+//! 
+//! @param [in] type  - type of operation node
+//! @param [in] node1 - left child
+//! @param [in] node2 - right child 
+//!
+//! @return ptr to created node
+//!
+node_t * new_op(node_type type, node_t * node1, node_t * node2);
+
+
+//! deletes subtree
+//!
+int delete_subtree_or_node(node_t * node);

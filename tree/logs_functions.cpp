@@ -59,8 +59,9 @@ int tree_dump_(tree_t * tree, location_info info)
     ASSERT(tree);
     ASSERT(info.file);
     ASSERT(info.func);
+    //printf("dump %s %s %lu\n", info.file, info.func, info.line);
 
-    fprintf(log_file, "\n<pre>\n    dump\ndump from:\nfile - %s\nfunc - %s\nline - %lu\n\ntree - %p\nroot - %p\n</pre>\n", info.file, info.func, info.line, tree, tree->root);
+    fprintf(log_file, "\n<pre>\n\n\n    dump\ndump from:\nfile - %s\nfunc - %s\nline - %lu\n\ntree - %p\nroot - %p\n</pre>\n", info.file, info.func, info.line, tree, tree->root);
 
     tree_print(tree->root);
 
@@ -100,7 +101,7 @@ int graphviz_add_node(node_t * node)
     ASSERT(node);
     ASSERT(graphviz_file);
 
-    fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {type = %d} | {value = %lg} | {%p | %p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, node->type, node->value, node->left_child, node->right_child, (unsigned) get_color(node->type));
+    fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {%s} | {value = %lg} | {%p | %p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, get_type(node->type), node->value, node->left_child, node->right_child, (unsigned) get_color(node->type));
     
     return 0;
 }
@@ -169,7 +170,7 @@ int get_color(node_type type)
 {
     switch (type)
     {
-    case NUM:
+    case TYPE_NUM:
         {
             return 0xFAEEDD;
         }
@@ -202,6 +203,47 @@ int get_color(node_type type)
     default:
         break;
     }
+
+    return 0;
+}
+
+
+const char * get_type(node_type type)
+{
+    switch (type)
+    {
+        case TYPE_NUM:
+            return "num";
+        
+        case OP_ADD:
+            return "+";
+
+        case OP_SUB:
+            return "-";
+
+        case OP_MUL:
+            return "*";
+        
+        case OP_DIV:
+            return "/";
+        
+        default:
+            return NULL;
+    }
+
+    return NULL;
+}
+
+
+int subtree_dump_(node_t * root, location_info info)
+{
+    ASSERT(root);
+    ASSERT(info.file);
+    ASSERT(info.func);
+
+    fprintf(log_file, "\n<pre>\n\n\n    subtree dump\ndump from:\nfile - %s\nfunc - %s\nline - %lu\n\nroot - %p\n</pre>\n", info.file, info.func, info.line, root);
+
+    tree_print(root);
 
     return 0;
 }
