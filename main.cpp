@@ -17,30 +17,23 @@ int main(void)
 
     node_t * n4 = new_num(14);
     node_t * n5 = new_op(OP_MUL, n3, n4);
-    tree.root = n5;
+    tree_link_root(&tree, n5);
     
     tree_dump(&tree);
 
     node_t * n6 = new_num(28);
     node_t * n7 = create_node(OP_SUB, null_val, n6, n5);
-    tree.root = n7;
+    tree_link_root(&tree, n7);
 
     tree_dump(&tree);
 
     node_t * n8 = create_node(TYPE_NUM, 01.43);
     node_t * n9 = create_node(OP_DIV, null_val, n7, n8);
-
-    tree.root = n9;
-
-    tree_dump(&tree);
-
-    delete_subtree_or_node(n3);
+    tree_link_root(&tree, n9);
 
     tree_dump(&tree);
 
-    delete_subtree_or_node(n4);
-
-    subtree_dump(n7);
+    tree_print(&tree, IN_ORDER);
 
     tree_dtor(&tree);
     close_log_file();

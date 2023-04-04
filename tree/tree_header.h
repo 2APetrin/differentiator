@@ -133,6 +133,11 @@ node_t * new_num(elem value);
 node_t * new_op(node_type type, node_t * node1, node_t * node2);
 
 
-//! deletes subtree
+//! @brief deletes subtree
 //!
-int delete_subtree_or_node(node_t * node);
+int delete_subtree(node_t * node);
+
+
+//! @brief sets tree root
+//!
+int tree_link_root(tree_t * tree, node_t * node);

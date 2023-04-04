@@ -111,7 +111,7 @@ node_t * new_op(node_type type, node_t * node1, node_t * node2)
 }
 
 
-int delete_subtree_or_node(node_t * node)
+int delete_subtree(node_t * node)
 {
     ASSERT(node);
 
@@ -132,4 +132,14 @@ int delete_subtree_or_node(node_t * node)
     }
     
     return 1;
+}
+
+
+int tree_link_root(tree_t * tree, node_t * node)
+{
+    ASSERT(tree);
+    ASSERT(node);
+
+    tree->root = node;
+    return 0;
 }

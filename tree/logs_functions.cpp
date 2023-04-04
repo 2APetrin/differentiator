@@ -63,7 +63,7 @@ int tree_dump_(tree_t * tree, location_info info)
 
     fprintf(log_file, "\n<pre>\n\n\n    dump\ndump from:\nfile - %s\nfunc - %s\nline - %lu\n\ntree - %p\nroot - %p\n</pre>\n", info.file, info.func, info.line, tree, tree->root);
 
-    tree_print(tree->root);
+    tree_print_dump(tree->root);
 
     return 0;
 }
@@ -139,7 +139,7 @@ int node_link(node_t * node)
 }
 
 
-int tree_print(node_t * root)
+int tree_print_dump(node_t * root)
 {
     if (root == NULL)
     {
@@ -237,13 +237,129 @@ const char * get_type(node_type type)
 
 int subtree_dump_(node_t * root, location_info info)
 {
-    ASSERT(root);
     ASSERT(info.file);
     ASSERT(info.func);
 
+    if (root == NULL)
+        return 0;
+
     fprintf(log_file, "\n<pre>\n\n\n    subtree dump\ndump from:\nfile - %s\nfunc - %s\nline - %lu\n\nroot - %p\n</pre>\n", info.file, info.func, info.line, root);
 
-    tree_print(root);
+    tree_print_dump(root);
+
+    return 0;
+}
+
+
+int subtree_print(node_t * node, print_mode mode)
+{
+    if (node == NULL)
+        return 1;
+
+    switch (mode)
+    {
+        case IN_ORDER:
+            print_in_order(node);
+            break;
+
+        case PRE_ORDER:
+            print_pre_order(node);
+            break;
+
+        case POST_ORDER:
+            print_post_order(node);
+            break;
+
+        default:
+            break;
+    }
+
+    return 0;
+}
+
+
+int print_in_order(node_t * node)
+{
+    printf("(");
+
+    if (node->left_child != NULL)
+    {
+        print_in_order(node->left_child);
+    }
+
+    if (node->type)
+        printf("%s", get_type(node->type));
+    else
+        printf("%lg", node->value);
+
+    if (node->right_child != NULL)
+    {
+        print_in_order(node->right_child);
+    }
+
+    printf(")");
+
+    return 0;
+}
+
+
+int print_pre_order(node_t * node)
+{
+    printf("(");
+
+    if (node->type)
+        printf("%s", get_type(node->type));
+    else
+        printf("%lg", node->value);
+
+    if (node->left_child != NULL)
+    {
+        print_pre_order(node->left_child);
+    }
+
+    if (node->right_child != NULL)
+    {
+        print_pre_order(node->right_child);
+    }
+
+    printf(")");
+
+    return 0;
+}
+
+int print_post_order(node_t * node)
+{
+    printf("(");
+
+    if (node->left_child != NULL)
+    {
+        print_post_order(node->left_child);
+    }
+
+    if (node->right_child != NULL)
+    {
+        print_post_order(node->right_child);
+    }
+
+    if (node->type)
+        printf("%s", get_type(node->type));
+    else
+        printf("%lg", node->value);
+
+    printf(")");
+
+    return 0;
+}
+
+
+int tree_print(tree_t * tree, print_mode mode)
+{
+    ASSERT(tree);
+
+    if (tree->root == NULL)
+        return 1;
+
+    subtree_print(tree->root, mode);
 
     return 0;
 }

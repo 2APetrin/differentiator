@@ -52,6 +52,16 @@ enum arrow_colors
 };
 
 
+//! @brief types of tree print
+//!
+enum print_mode
+{
+    IN_ORDER   = 0,
+    PRE_ORDER  = 1,
+    POST_ORDER = 2
+};
+
+
 //! @brief opens logfile
 //!
 int open_log_file(void);
@@ -86,7 +96,7 @@ int tree_dump_(tree_t * tree, location_info info);
 
 //! @brief prints tree in graphviz file
 //!
-int tree_print(node_t * node);
+int tree_print_dump(node_t * node);
 
 
 //! @brief prints tree node
@@ -131,3 +141,28 @@ int tree_verify(tree_t * tree);
 //! @brief writes dump of subtree into log file
 //!
 int subtree_dump_(node_t * root, location_info info);
+
+
+//! @brief prints tree into stdout
+//!
+int subtree_print(node_t * node, print_mode mode);
+
+
+//! @brief prints tree in pre order
+//!
+int print_pre_order(node_t * node);
+
+
+//! @brief prints tree in in order
+//!
+int print_in_order(node_t * node);
+
+
+//! @brief prints tree in post order
+//!
+int print_post_order(node_t * node);
+
+
+//! @brief prints whole tree
+//!
+int tree_print(tree_t * tree, print_mode mode);
