@@ -101,7 +101,7 @@ int graphviz_add_node(node_t * node)
     ASSERT(node);
     ASSERT(graphviz_file);
 
-    fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {%s} | {value = %lg} | {%p | %p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, get_type(node->type), node->value, node->left_child, node->right_child, (unsigned) get_color(node->type));
+    fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {%s} | {value = %lg} | {%p|%p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, get_type(node->type), node->value, node->left_child, node->right_child, (unsigned) get_color(node->type));
     
     return 0;
 }
@@ -158,7 +158,7 @@ int tree_print_dump(node_t * root)
     snprintf(sys_cmd + strlen(sys_cmd), 30, "%d.png", graphviz_png_count);
     system(sys_cmd);
 
-    fprintf(log_file, "\n<img src=\"list_dump%d.png\" width=\"30%%\">\n", graphviz_png_count);
+    fprintf(log_file, "\n<img src=\"list_dump%d.png\" width=\"60%%\">\n", graphviz_png_count);
 
     graphviz_png_count++;
 
@@ -190,13 +190,13 @@ int get_color(node_type type)
     
     case OP_MUL:
         {
-            return 0xE28090;
+            return 0xACABF2;
         }
         break;
     
     case OP_DIV:
         {
-            return 0xE28090;
+            return 0xACABF2;
         }
         break;
 
@@ -251,7 +251,7 @@ int subtree_dump_(node_t * root, location_info info)
 }
 
 
-int subtree_print(node_t * node, print_mode mode)
+int subtree_print(node_t * node, print_mode mode, FILE * out_stream)
 {
     if (node == NULL)
         return 1;
@@ -259,107 +259,122 @@ int subtree_print(node_t * node, print_mode mode)
     switch (mode)
     {
         case IN_ORDER:
-            print_in_order(node);
+            print_in_order(node, out_stream);
             break;
 
         case PRE_ORDER:
-            print_pre_order(node);
+            print_pre_order(node, out_stream);
             break;
 
         case POST_ORDER:
-            print_post_order(node);
+            print_post_order(node, out_stream);
             break;
 
         default:
-            break;
+            fprintf(log_file, "<pre>\nERROR in subtree print\nbad print mode\n</pre>");
+            return 1;
     }
 
     return 0;
 }
 
 
-int print_in_order(node_t * node)
+int print_in_order(node_t * node, FILE * out_stream)
 {
-    printf("(");
+    fprintf(out_stream, "(");
 
     if (node->left_child != NULL)
     {
-        print_in_order(node->left_child);
+        print_in_order(node->left_child, out_stream);
     }
 
     if (node->type)
-        printf("%s", get_type(node->type));
+        fprintf(out_stream, "%s", get_type(node->type));
     else
-        printf("%lg", node->value);
+        fprintf(out_stream, "%lg", node->value);
 
     if (node->right_child != NULL)
     {
-        print_in_order(node->right_child);
+        print_in_order(node->right_child, out_stream);
     }
 
-    printf(")");
+    fprintf(out_stream, ")");
 
     return 0;
 }
 
 
-int print_pre_order(node_t * node)
+int print_pre_order(node_t * node, FILE * out_stream)
 {
-    printf("(");
+    fprintf(out_stream, "(");
 
     if (node->type)
-        printf("%s", get_type(node->type));
+        fprintf(out_stream, "%s", get_type(node->type));
     else
-        printf("%lg", node->value);
+        fprintf(out_stream, "%lg", node->value);
 
     if (node->left_child != NULL)
     {
-        print_pre_order(node->left_child);
-    }
-
-    if (node->right_child != NULL)
-    {
-        print_pre_order(node->right_child);
-    }
-
-    printf(")");
-
-    return 0;
-}
-
-int print_post_order(node_t * node)
-{
-    printf("(");
-
-    if (node->left_child != NULL)
-    {
-        print_post_order(node->left_child);
+        print_pre_order(node->left_child, out_stream);
     }
 
     if (node->right_child != NULL)
     {
-        print_post_order(node->right_child);
+        print_pre_order(node->right_child, out_stream);
+    }
+
+    fprintf(out_stream, ")");
+
+    return 0;
+}
+
+int print_post_order(node_t * node, FILE * out_stream)
+{
+    fprintf(out_stream, "(");
+
+    if (node->left_child != NULL)
+    {
+        print_post_order(node->left_child, out_stream);
+    }
+
+    if (node->right_child != NULL)
+    {
+        print_post_order(node->right_child, out_stream);
     }
 
     if (node->type)
-        printf("%s", get_type(node->type));
+        fprintf(out_stream, "%s", get_type(node->type));
     else
-        printf("%lg", node->value);
+        fprintf(out_stream, "%lg", node->value);
 
-    printf(")");
+    fprintf(out_stream, ")");
 
     return 0;
 }
 
 
-int tree_print(tree_t * tree, print_mode mode)
+int tree_print(tree_t * tree, print_mode mode, FILE * out_stream)
 {
     ASSERT(tree);
 
     if (tree->root == NULL)
         return 1;
 
-    subtree_print(tree->root, mode);
+    subtree_print(tree->root, mode, out_stream);
 
     return 0;
+}
+
+
+FILE * open_code_file(void)
+{
+    FILE * fp = NULL;
+    
+    if (!(fp = fopen("code.txt", "r")))
+    {
+        printf("Cannot open code_file\n");
+        return NULL;
+    }
+
+    return fp;
 }

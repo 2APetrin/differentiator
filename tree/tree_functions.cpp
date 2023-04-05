@@ -27,7 +27,7 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
     {
         if (node1 || node2)
         {
-            printf("error: create_node you are creating nuber, but used link parameters\n");
+            fprintf(log_file, "<pre> error: create_node you are creating nuber, but used link parameters\n </pre>");
             return NULL;
         }
         
@@ -48,9 +48,9 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
         new_node->right_child = node2;
         new_node->left_child  = node1;
 
-        node1->parent = new_node;
-        node2->parent = new_node;
-        new_node->type        = type;
+        node1->parent  = new_node;
+        node2->parent  = new_node;
+        new_node->type = type;
 
         return new_node;
     }
@@ -141,5 +141,17 @@ int tree_link_root(tree_t * tree, node_t * node)
     ASSERT(node);
 
     tree->root = node;
+    return 0;
+}
+
+
+int link_nodes(node_t * node_root, node_t * node1, node_t * node2)
+{
+    ASSERT(node_root);
+    ASSERT(node1);
+    ASSERT(node2);
+
+    node_root->left_child  = node1;
+    node_root->right_child = node2;
     return 0;
 }

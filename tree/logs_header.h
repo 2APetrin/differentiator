@@ -143,26 +143,31 @@ int tree_verify(tree_t * tree);
 int subtree_dump_(node_t * root, location_info info);
 
 
+//! @brief gets ptr to stream
+//!
+FILE * open_code_file(void);
+
+
 //! @brief prints tree into stdout
 //!
-int subtree_print(node_t * node, print_mode mode);
+int subtree_print(node_t * node, print_mode mode, FILE * out_stream);
 
 
 //! @brief prints tree in pre order
 //!
-int print_pre_order(node_t * node);
+int print_pre_order(node_t * node, FILE * out_stream);
 
 
 //! @brief prints tree in in order
 //!
-int print_in_order(node_t * node);
+int print_in_order(node_t * node, FILE * out_stream);
 
 
 //! @brief prints tree in post order
 //!
-int print_post_order(node_t * node);
+int print_post_order(node_t * node, FILE * out_stream);
 
 
 //! @brief prints whole tree
 //!
-int tree_print(tree_t * tree, print_mode mode);
+int tree_print(tree_t * tree, print_mode mode, FILE * out_stream);

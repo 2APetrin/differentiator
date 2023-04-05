@@ -1,0 +1,1 @@
+#define NEXTsubtree create_subtree(text, &(++(*index)))

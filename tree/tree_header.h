@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <math.h>
 
 #define LOCATION __PRETTY_FUNCTION__, __FILE__, __LINE__
 #define tree_ctor(tree) tree_ctor_((tree), {(#tree), LOCATION})
@@ -141,3 +141,12 @@ int delete_subtree(node_t * node);
 //! @brief sets tree root
 //!
 int tree_link_root(tree_t * tree, node_t * node);
+
+
+//! @brief links 3 nodes
+//!
+//! @param [in] node_root - root node 
+//! @param [in] node1     - left child
+//! @param [in] node2     - right child 
+//!
+int link_nodes(node_t * node_root, node_t * node1, node_t * node2);
