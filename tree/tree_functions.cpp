@@ -27,9 +27,12 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
     {
         if (node1 || node2)
         {
-            fprintf(log_file, "<pre> error: create_node you are creating nuber, but used link parameters\n </pre>");
+            fprintf(log_file, "<pre>\nerror: create_node you are creating nuber, but used link parameters\n</pre>");
             return NULL;
         }
+
+        new_node->left_child  = NULL;
+        new_node->right_child = NULL;
         
         new_node->type  = type;
         new_node->value = value;
@@ -37,7 +40,7 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
         return new_node;
     }
 
-    else //команда
+    else if (type < TYPE_VAR) //команда
     {
         if (value != null_val)
         {
@@ -48,11 +51,63 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
         new_node->right_child = node2;
         new_node->left_child  = node1;
 
-        node1->parent  = new_node;
-        node2->parent  = new_node;
-        new_node->type = type;
+        new_node->value = value;
+        new_node->type  = type;
+        node1->parent   = new_node;
+        node2->parent   = new_node;
 
         return new_node;
+    }
+
+    else if (type == TYPE_VAR)
+    {
+        if (node1 || node2)
+        {
+            fprintf(log_file, "<pre>\nerror: create_node you are creating variable, but used link parameters\n</pre>");
+            return NULL;
+        }
+
+        new_node->left_child  = NULL;
+        new_node->right_child = NULL;
+        
+        new_node->value = value;
+        new_node->type  = type;
+
+        return new_node;
+    }
+
+    else //функции
+    {
+        if (type == FUNC_POW || type == FUNC_LOG)
+        {
+            new_node->left_child  = node1;
+            new_node->right_child = node2;
+
+            new_node->type  = type;
+            new_node->value = null_val;
+            node1->parent   = new_node;
+            node2->parent   = new_node;
+
+            return new_node;
+        }
+
+        else
+        {
+            if (node1)
+            {
+                fprintf(log_file, "<pre>\nerror: create_node you are creating func with one argument, but used link left parameter\n</pre>");
+                return NULL;
+            }
+
+            new_node->left_child  = NULL;
+            new_node->right_child = node2;
+
+            new_node->type  = type;
+            new_node->value = null_val;
+            node2->parent   = new_node;
+
+            return new_node;
+        }
     }
 
     printf("error: unknown error in create_node\n");
@@ -154,4 +209,16 @@ int link_nodes(node_t * node_root, node_t * node1, node_t * node2)
     node_root->left_child  = node1;
     node_root->right_child = node2;
     return 0;
+}
+
+
+node_t * new_func(node_type type, node_t * Lc, node_t * Rc)
+{
+    return create_node(type, null_val, Lc, Rc);
+}
+
+
+node_t * new_var(int name)
+{
+    return create_node(TYPE_VAR, name);
 }

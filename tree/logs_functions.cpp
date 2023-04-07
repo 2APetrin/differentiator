@@ -100,8 +100,17 @@ int graphviz_add_node(node_t * node)
 {
     ASSERT(node);
     ASSERT(graphviz_file);
-
-    fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {%s} | {value = %lg} | {%p|%p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, get_type(node->type), node->value, node->left_child, node->right_child, (unsigned) get_color(node->type));
+    
+    if (node->type == TYPE_VAR)
+        fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {parent - %p} | {%s} | {%c} | {%p|%p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, node->parent, get_type(node->type), (int)node->value, node->left_child, node->right_child, (unsigned) get_color(node->type));    
+    
+    else if (node->type > TYPE_VAR)
+    {
+        fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {parent - %p} | {%s} | {%p|%p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, node->parent, get_type(node->type), node->left_child, node->right_child, (unsigned) get_color(node->type));    
+    }
+    
+    else
+        fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {parent - %p} | {%s} | {value = %lg} | {%p|%p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, node->parent, get_type(node->type), node->value, node->left_child, node->right_child, (unsigned) get_color(node->type));
     
     return 0;
 }
@@ -171,34 +180,40 @@ int get_color(node_type type)
     switch (type)
     {
     case TYPE_NUM:
-        {
-            return 0xFAEEDD;
-        }
-        break;
+        return 0xFAEEDD;
     
     case OP_ADD:
-        {
-            return 0x8CCB5E;
-        }
-        break;
+        return 0x8CCB5E;
     
     case OP_SUB:
-        {
-            return 0x8CCB5E;
-        }
-        break;
+        return 0x8CCB5E;
     
     case OP_MUL:
-        {
-            return 0xACABF2;
-        }
-        break;
+        return 0xACABF2;
     
     case OP_DIV:
-        {
-            return 0xACABF2;
-        }
-        break;
+        return 0xACABF2;
+    
+    case TYPE_VAR:
+        return 0xFF9ED5;
+
+    case FUNC_EXP:
+        return 0xFDDB6D;
+    
+    case FUNC_COS:
+        return 0xFDDB6D;
+    
+    case FUNC_SIN:
+        return 0xFDDB6D;
+
+    case FUNC_LN:
+        return 0xFDDB6D;
+
+    case FUNC_POW:
+        return 0xFDDB6D;
+    
+    case FUNC_LOG:
+        return 0xFDDB6D;
 
     default:
         break;
@@ -227,6 +242,27 @@ const char * get_type(node_type type)
         case OP_DIV:
             return "/";
         
+        case TYPE_VAR:
+            return "var";
+        
+        case FUNC_EXP:
+            return "e";
+        
+        case FUNC_COS:
+            return "cos";
+        
+        case FUNC_SIN:
+            return "sin";
+
+        case FUNC_LN:
+            return "ln";
+        
+        case FUNC_LOG:
+            return "log";
+
+        case FUNC_POW:
+            return "pow";
+
         default:
             return NULL;
     }

@@ -26,7 +26,16 @@ enum node_type
     OP_ADD   = 1,
     OP_SUB   = 2,
     OP_MUL   = 3,
-    OP_DIV   = 4
+    OP_DIV   = 4,
+
+    TYPE_VAR = 5,
+    
+    FUNC_EXP = 6,
+    FUNC_POW = 7,
+    FUNC_SIN = 8,
+    FUNC_COS = 9,
+    FUNC_LOG = 10,
+    FUNC_LN  = 11
 };
 
 
@@ -150,3 +159,13 @@ int tree_link_root(tree_t * tree, node_t * node);
 //! @param [in] node2     - right child 
 //!
 int link_nodes(node_t * node_root, node_t * node1, node_t * node2);
+
+
+//! @brief creates func node
+//!
+node_t * new_func(node_type type, node_t * Lc, node_t * Rc);
+
+
+//! @brief creates func node
+//!
+node_t * new_var(int name);
