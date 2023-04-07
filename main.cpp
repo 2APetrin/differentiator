@@ -19,18 +19,15 @@ int main(void)
 
     tree_t tree = {};
     tree_ctor(&tree);
-    //make_tree(&tree, &text);
+    make_tree(&tree, &text, READ_PRE_ORDER);
 
-    node_t * n1 = new_var('x');
-    node_t * n2 = new_num(100);
-    node_t * n3 = new_func(FUNC_EXP, NULL, n1);
-    node_t * n4 = new_op(OP_ADD, n2, n3);
-    tree_link_root(&tree, n4);
-    tree_dump(&tree);
+    printf("\n\n");
+    for (int i = 0; i < text.len; i++)
+        printf("%d - %c\n", i, text.text_buff[i]);
 
     FILE * dest_file = fopen("out.txt", "w");
-    //if (dest_file)
-    //    tree_print(&tree, IN_ORDER, dest_file);
+    if (dest_file)
+        tree_print(&tree, PRE_ORDER, dest_file);
 
     //printf("value of tree - %lg\n", eval(tree.root));
 

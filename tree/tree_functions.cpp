@@ -40,7 +40,7 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
         return new_node;
     }
 
-    else if (type < TYPE_VAR) //команда
+    else if (type < TYPE_VAR && type != ERROR) //команда
     {
         if (value != null_val)
         {

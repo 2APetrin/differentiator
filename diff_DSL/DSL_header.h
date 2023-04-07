@@ -1,1 +1,1 @@
-#define NEXTsubtree create_subtree(text, &(++(*index)))
+#define NEXTsubtreePRE create_subtree_pre_order(text, &(++(*index)))

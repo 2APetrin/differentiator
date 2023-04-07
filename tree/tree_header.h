@@ -22,6 +22,8 @@ const int null_val = 0xDEAD;
 //!
 enum node_type
 {
+    ERROR    = -1,
+    
     TYPE_NUM = 0,
     OP_ADD   = 1,
     OP_SUB   = 2,

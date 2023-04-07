@@ -100,14 +100,12 @@ int graphviz_add_node(node_t * node)
 {
     ASSERT(node);
     ASSERT(graphviz_file);
-    
+
     if (node->type == TYPE_VAR)
         fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {parent - %p} | {%s} | {%c} | {%p|%p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, node->parent, get_type(node->type), (int)node->value, node->left_child, node->right_child, (unsigned) get_color(node->type));    
     
     else if (node->type > TYPE_VAR)
-    {
         fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {parent - %p} | {%s} | {%p|%p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, node->parent, get_type(node->type), node->left_child, node->right_child, (unsigned) get_color(node->type));    
-    }
     
     else
         fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {parent - %p} | {%s} | {value = %lg} | {%p|%p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, node->parent, get_type(node->type), node->value, node->left_child, node->right_child, (unsigned) get_color(node->type));
@@ -246,7 +244,7 @@ const char * get_type(node_type type)
             return "var";
         
         case FUNC_EXP:
-            return "e";
+            return "exp";
         
         case FUNC_COS:
             return "cos";
@@ -261,7 +259,7 @@ const char * get_type(node_type type)
             return "log";
 
         case FUNC_POW:
-            return "pow";
+            return "^";
 
         default:
             return NULL;
@@ -324,10 +322,18 @@ int print_in_order(node_t * node, FILE * out_stream)
         print_in_order(node->left_child, out_stream);
     }
 
-    if (node->type)
-        fprintf(out_stream, "%s", get_type(node->type));
-    else
+    if (!node->type)
         fprintf(out_stream, "%lg", node->value);
+    
+    else if (node->type != TYPE_VAR)
+    {
+        fprintf(out_stream, "%s", get_type(node->type));
+    }
+
+    else
+    {
+        fprintf(out_stream, "%c", (int)node->value);
+    }
 
     if (node->right_child != NULL)
     {
@@ -344,10 +350,18 @@ int print_pre_order(node_t * node, FILE * out_stream)
 {
     fprintf(out_stream, "(");
 
-    if (node->type)
-        fprintf(out_stream, "%s", get_type(node->type));
-    else
+    if (!node->type)
         fprintf(out_stream, "%lg", node->value);
+    
+    else if (node->type != TYPE_VAR)
+    {
+        fprintf(out_stream, "%s", get_type(node->type));
+    }
+
+    else
+    {
+        fprintf(out_stream, "%c", (int)node->value);
+    }
 
     if (node->left_child != NULL)
     {
@@ -378,10 +392,18 @@ int print_post_order(node_t * node, FILE * out_stream)
         print_post_order(node->right_child, out_stream);
     }
 
-    if (node->type)
-        fprintf(out_stream, "%s", get_type(node->type));
-    else
+    if (!node->type)
         fprintf(out_stream, "%lg", node->value);
+    
+    else if (node->type != TYPE_VAR)
+    {
+        fprintf(out_stream, "%s", get_type(node->type));
+    }
+
+    else
+    {
+        fprintf(out_stream, "%c", (int)node->value);
+    }
 
     fprintf(out_stream, ")");
 
