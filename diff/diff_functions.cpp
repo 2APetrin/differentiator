@@ -77,12 +77,34 @@ node_t * create_subtree_in_order(text_t * text, int * index)
     ASSERT(text);
 
     double num = NAN;
-    int length = 0;
+    char cmd[8] = {0};
+    int length_num = 0;
+    int length_cmd = 0;
+
+    //node_t * Lc = NULL;
+    //node_t * Rc = NULL;
+
+    sscanf(text->text_buff + *index, "%lg%n", &num, &length_num);
+    sscanf(text->text_buff + *index, "%[a-z^]%n", cmd, &length_cmd);
+
+    if (length_num)
+    {
+        *index += length_num;
+        if (text->text_buff[*index] == ')')
+            return new_num(num);
+
+        else
+        {
+            fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: there is no ) after num</pre>\n");
+            return NULL;
+        }
+    }
+
     return 0;
 }
 
 
-node_t * create_subtree_pre_order(text_t * text, int * index)
+node_t * create_subtree_pre_order(text_t * text, int * index) // недописал, дед должен рассказать как
 {
     ASSERT(text);
 
@@ -119,9 +141,9 @@ node_t * create_subtree_pre_order(text_t * text, int * index)
         if (text->text_buff[*index] == '(' && length_cmd > 1)
         {
             --(*index);
-            printf("\ncmd detected\n");
+            //printf("\ncmd detected\n");
             node_type type = get_type_from_cmd(cmd);
-            printf("type of cmd - %s\n", get_type(type));
+            //printf("type of cmd - %s\n", get_type(type));
 
             switch (type)
             {
@@ -133,7 +155,7 @@ node_t * create_subtree_pre_order(text_t * text, int * index)
                     if (Lc && Rc)
                         return new_func(FUNC_LOG, Lc, Rc);
 
-                    fprintf(log_file, "<pre>ERROR in create_subtree: func_log (Lc && Rc) fail</pre>\n");
+                    fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: func_log (Lc && Rc) fail</pre>\n");
                     return NULL;
                 
                 case FUNC_POW:
@@ -144,7 +166,7 @@ node_t * create_subtree_pre_order(text_t * text, int * index)
                     if (Lc && Rc)
                         return new_func(FUNC_POW, Lc, Rc);
 
-                    fprintf(log_file, "<pre>ERROR in create_subtree: func_pow (Lc && Rc) fail</pre>\n");
+                    fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: func_pow (Lc && Rc) fail</pre>\n");
                     return NULL;
                 
                 case FUNC_COS:
@@ -165,7 +187,7 @@ node_t * create_subtree_pre_order(text_t * text, int * index)
                     if (Rc)
                         return new_func(FUNC_SIN, Lc, Rc);
 
-                    fprintf(log_file, "<pre>ERROR in create_subtree: func_sin Rc fail</pre>\n");
+                    fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: func_sin Rc fail</pre>\n");
                     return NULL;
                 
                 case FUNC_LN:
@@ -186,7 +208,10 @@ node_t * create_subtree_pre_order(text_t * text, int * index)
                     if (Rc)
                         return new_func(FUNC_EXP, Lc, Rc);
 
-                    fprintf(log_file, "<pre>ERROR in create_subtree: func_exp Rc fail</pre>\n");
+                    fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: func_exp Rc fail</pre>\n");
+                    return NULL;
+                
+                default:
                     return NULL;
             }
         }
@@ -199,7 +224,7 @@ node_t * create_subtree_pre_order(text_t * text, int * index)
                 Rc = NEXTsubtreePRE;
                 ++(*index);
 
-                printf("%p %p\n", Lc, Rc);
+                //printf("%p %p\n", Lc, Rc);
 
                 if (Rc && Lc)
                     return new_func(FUNC_POW, Lc, Rc);
@@ -209,15 +234,15 @@ node_t * create_subtree_pre_order(text_t * text, int * index)
 
             else
             {
-                printf("\nпеременная - %c\n", cmd[0]);
-                printf("\n%s\n", text->text_buff + *index);
+                //printf("\nпеременная - %c\n", cmd[0]);
+                //printf("\n%s\n", text->text_buff + *index);
                 return new_var(cmd[0]);
             }
         }
         
         else
         {
-            fprintf(log_file, "<pre>ERROR in create_subtree: there is no ) after func</pre>\n");
+            fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: there is no ) after func</pre>\n");
             return NULL;
         }
     }
@@ -268,11 +293,11 @@ node_t * create_subtree_pre_order(text_t * text, int * index)
             return NULL;
         
         case ')':
-            fprintf(log_file, "<pre>ERROR in create_subtree: switch catched ), index is %d\n</pre>", *index);
+            fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: switch catched ), index is %d\n</pre>", *index);
             break;
         
         default:
-            printf("unknown error");
+            fprintf(log_file, "<pre>\nunknown error in create_subtree_pre_order\n</pre>");
     }
 
     return NULL;
@@ -358,4 +383,78 @@ elem eval(node_t * node)
     }
 
     return NAN;
+}
+
+
+node_t * diff(node_t * node)
+{
+    if (!node)
+        return NULL;
+    
+    switch (node->type)
+    {
+        case ERROR:
+            return NULL;
+        
+        case TYPE_NUM: return new_num(0);
+        case OP_ADD:   return ADD(LC, RC);
+        case OP_SUB:   return SUB(LC, RC);
+        case OP_MUL:   return ADD(MUL(LC, copyR), MUL(copyL, RC));
+        case OP_DIV:   return DIV(SUB(MUL(LC, copyR), MUL(copyL, RC)), MUL(copyR, copyR));
+        
+        case TYPE_VAR: return new_num(1);
+        
+        case FUNC_EXP: return MUL(copy, RC);
+        case FUNC_LN:  return MUL(DIV(new_num(1), copyR), RC);
+        case FUNC_POW:
+        {
+            if (POW_CONST)
+                return new_num(0);
+            
+            if (SHOW_FUNC)
+                return MUL(copy, LN(copyR));
+
+            if (POW_OF_X)
+                return MUL(MUL(POW(copyL, SUB(copyR, new_num(1))), copyR), LC);
+            
+            if (FX_POW_GX)
+                return MUL(copy, ADD(MUL(RC, LN(copyL)), MUL(DIV(new_num(1), copyL), copyL)));
+        }
+
+        case FUNC_SIN: return MUL(COS(copyR), RC);
+        case FUNC_COS: return MUL(new_num(-1), MUL(SIN(copyR), RC));
+
+        case FUNC_LOG:
+        {
+            if (LOG_CONST) return new_num(0);
+
+            //if (LOG_ONLY_ARG_X)
+        }
+
+        default:
+            fprintf(log_file, "<pre>\nERROR in diff function. Unknown command\n</pre>");
+            return NULL;
+    }
+
+    return NULL;
+}
+
+
+node_t * copy_subtree(node_t * node)
+{
+    if (!node)
+        return NULL;
+    
+    node_t * ret_node = (node_t *) calloc (1, sizeof(node_t));
+
+    ret_node->left_child  = copy_subtree(node->left_child);
+    ret_node->right_child = copy_subtree(node->right_child);
+
+    if (ret_node->left_child) ret_node->left_child->parent = ret_node;
+    if (ret_node->right_child) ret_node->right_child->parent = ret_node;
+    
+    ret_node->type  = node->type;
+    ret_node->value = node->value;  
+
+    return ret_node;
 }

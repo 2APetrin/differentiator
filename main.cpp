@@ -21,16 +21,16 @@ int main(void)
     tree_ctor(&tree);
     make_tree(&tree, &text, READ_PRE_ORDER);
 
-    printf("\n\n");
-    for (int i = 0; i < text.len; i++)
-        printf("%d - %c\n", i, text.text_buff[i]);
-
     FILE * dest_file = fopen("out.txt", "w");
-    if (dest_file)
-        tree_print(&tree, PRE_ORDER, dest_file);
 
     //printf("value of tree - %lg\n", eval(tree.root));
 
+    node_t * diff_tree = diff(tree.root);
+    subtree_dump(diff_tree);
+    subtree_print(diff_tree, IN_ORDER, dest_file);
+
+    fclose(dest_file);
+    tree_free(diff_tree);
     tree_dtor(&tree);
     text_dtor(&text);
     close_log_file();

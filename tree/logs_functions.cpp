@@ -212,6 +212,9 @@ int get_color(node_type type)
     
     case FUNC_LOG:
         return 0xFDDB6D;
+    
+    case ERROR:
+        return 0xE28090;
 
     default:
         break;
@@ -260,6 +263,9 @@ const char * get_type(node_type type)
 
         case FUNC_POW:
             return "^";
+
+        case ERROR:
+            return "error";
 
         default:
             return NULL;
@@ -319,6 +325,15 @@ int print_in_order(node_t * node, FILE * out_stream)
 
     if (node->left_child != NULL)
     {
+        if (node->type == FUNC_LOG)
+        {
+            fprintf(out_stream, "%s", get_type(node->type));
+            print_in_order(node->left_child, out_stream);
+            print_in_order(node->right_child, out_stream);
+            fprintf(out_stream, ")");
+            return 0;
+        }
+
         print_in_order(node->left_child, out_stream);
     }
 

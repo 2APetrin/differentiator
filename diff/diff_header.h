@@ -53,3 +53,12 @@ elem eval(node_t * node);
 //! @brief compares strings with funcs
 //!
 node_type get_type_from_cmd(char * cmd);
+
+
+//! @brief makes new tree with differential of source function
+//!
+node_t * diff(node_t * node);
+
+//! @brief copies subtree with root - node
+//!
+node_t * copy_subtree(node_t * node);
