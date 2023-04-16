@@ -56,6 +56,8 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
         node1->parent   = new_node;
         node2->parent   = new_node;
 
+        subtree_dump(new_node);
+
         return new_node;
     }
 
@@ -88,6 +90,8 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
             node1->parent   = new_node;
             node2->parent   = new_node;
 
+            subtree_dump(new_node);
+
             return new_node;
         }
 
@@ -105,6 +109,8 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
             new_node->type  = type;
             new_node->value = null_val;
             node2->parent   = new_node;
+
+            subtree_dump(new_node);
 
             return new_node;
         }

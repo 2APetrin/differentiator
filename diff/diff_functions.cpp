@@ -72,39 +72,7 @@ int make_tree(tree_t * tree, text_t * text, read_mode mode)
 }
 
 
-node_t * create_subtree_in_order(text_t * text, int * index)
-{
-    ASSERT(text);
-
-    double num = NAN;
-    char cmd[8] = {0};
-    int length_num = 0;
-    int length_cmd = 0;
-
-    //node_t * Lc = NULL;
-    //node_t * Rc = NULL;
-
-    sscanf(text->text_buff + *index, "%lg%n", &num, &length_num);
-    sscanf(text->text_buff + *index, "%[a-z^]%n", cmd, &length_cmd);
-
-    if (length_num)
-    {
-        *index += length_num;
-        if (text->text_buff[*index] == ')')
-            return new_num(num);
-
-        else
-        {
-            fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: there is no ) after num</pre>\n");
-            return NULL;
-        }
-    }
-
-    return 0;
-}
-
-
-node_t * create_subtree_pre_order(text_t * text, int * index) // недописал, дед должен рассказать как
+node_t * create_subtree_pre_order(text_t * text, int * index) 
 {
     ASSERT(text);
 
@@ -424,12 +392,7 @@ node_t * diff(node_t * node)
         case FUNC_SIN: return MUL(COS(copyR), RC);
         case FUNC_COS: return MUL(new_num(-1), MUL(SIN(copyR), RC));
 
-        case FUNC_LOG:
-        {
-            if (LOG_CONST) return new_num(0);
-
-            //if (LOG_ONLY_ARG_X)
-        }
+        case FUNC_LOG: return MUL(DIV(new_num(1), MUL(copyR, LN(copyL))), RC);
 
         default:
             fprintf(log_file, "<pre>\nERROR in diff function. Unknown command\n</pre>");
@@ -458,3 +421,6 @@ node_t * copy_subtree(node_t * node)
 
     return ret_node;
 }
+
+
+
