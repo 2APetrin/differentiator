@@ -96,6 +96,11 @@ typedef struct
 } tree_t;
 
 
+//! @brief accuracy for equald
+//!
+const double EPSYLON = 0.000001;
+
+
 //! @brief initializes tree
 //!
 //! @param [out] tree ptr to our tree object
@@ -171,3 +176,8 @@ node_t * new_func(node_type type, node_t * Lc, node_t * Rc);
 //! @brief creates func node
 //!
 node_t * new_var(int name);
+
+
+//! @brief checks if doubles are equal
+//!
+int equald(double val1, double val2);

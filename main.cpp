@@ -19,18 +19,8 @@ int main(void)
 
     tree_t tree = {};
     tree_ctor(&tree);
-    make_tree(&tree, &text, READ_PRE_ORDER);
+    make_tree_in_order(&tree, &text);
 
-    FILE * dest_file = fopen("out.txt", "w");
-
-    //printf("value of tree - %lg\n", eval(tree.root));
-
-    node_t * diff_tree = diff(tree.root);
-    subtree_dump(diff_tree);
-    subtree_print(diff_tree, IN_ORDER, dest_file);
-
-    fclose(dest_file);
-    tree_free(diff_tree);
     tree_dtor(&tree);
     text_dtor(&text);
     close_log_file();

@@ -42,9 +42,15 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
 
     else if (type < TYPE_VAR && type != ERROR) //команда
     {
-        if (value != null_val)
+        if (!equald(value, null_val))
         {
             printf("error: value in create_node is not null_val\n");
+            return NULL;
+        }
+
+        if (!(node1 && node2))
+        {
+            fprintf(log_file, "<pre>\nerror: create_node - one of children is null (operator)\n</pre>");
             return NULL;
         }
 
@@ -80,6 +86,12 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
 
     else //функции
     {
+        if (!(node1 && node2))
+        {
+            fprintf(log_file, "<pre>\nerror: create_node - one of children is null (function)\n</pre>");
+            return NULL;
+        }
+
         if (type == FUNC_POW || type == FUNC_LOG)
         {
             new_node->left_child  = node1;
@@ -227,4 +239,16 @@ node_t * new_func(node_type type, node_t * Lc, node_t * Rc)
 node_t * new_var(int name)
 {
     return create_node(TYPE_VAR, name);
+}
+
+
+int equald(double val1, double val2)
+{
+    ASSERT(isfinite(val1));
+    ASSERT(isfinite(val2));
+
+    if (val2 - val1 < EPSYLON && val2 - val1 > -1 * EPSYLON)
+        return 1;
+    
+    return 0;
 }

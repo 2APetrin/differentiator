@@ -15,6 +15,8 @@ int text_ctor(text_t * text, FILE * stream)
     text->text_buff = (char *) calloc (text->len + 1, sizeof(char));
     if (!text->text_buff)
         return 1;
+    
+    text->index = 0;
 
     fread(text->text_buff, sizeof(char), text->len, stream);
     text->text_buff[text->len] = '\0';
@@ -52,10 +54,6 @@ int make_tree(tree_t * tree, text_t * text, read_mode mode)
             tree->root = root;
         }
             break;
-
-        case READ_IN_ORDER:
-            //tree->root = create_subtree_in_order(text, &index);
-            break;
         
         default:
             return 1;
@@ -63,7 +61,7 @@ int make_tree(tree_t * tree, text_t * text, read_mode mode)
 
     tree_dump(tree);
 
-    printf("index - %d\nlen - %lu", index, text->len);
+    //printf("index - %d\nlen - %lu", index, text->len);
 
     if (index != (int)text->len - 1)
         fprintf(log_file, "<pre>\nERROR in make tree: not all symbols were read\n</pre>");
@@ -423,4 +421,138 @@ node_t * copy_subtree(node_t * node)
 }
 
 
+int make_tree_in_order(tree_t * tree, text_t * text)
+{
+    ASSERT(tree);
+    ASSERT(text);
+    ASSERT(text->text_buff);
 
+    tree->root = get_g(text);
+    
+    tree_dump(tree);
+    
+    return 0;
+}
+
+
+node_t * get_g(text_t * text)
+{
+    text->index = 0;
+    node_t * node = get_e(text);
+    
+    if (text->text_buff[text->index] != '$')
+    {
+        fprintf(log_file, "<pre>\nERROR: index %d. Expexted $, but is: %c\n</pre>", text->index, text->text_buff[text->index]);
+        return NULL;
+    }
+
+    text->index++;
+    return node;
+}
+
+
+node_t * get_e(text_t * text)
+{
+    node_t * node1 = get_t(text);
+
+    while (text->text_buff[text->index] == '+' || text->text_buff[text->index] == '-')
+    {
+        int op = text->text_buff[text->index];
+        text->index++;
+
+        node_t * node2 = get_t(text);
+
+        if      (op == '+') node1 = new_op(OP_ADD, node1, node2);
+        else if (op == '-') node1 = new_op(OP_SUB, node1, node2);
+        else    
+        {
+            fprintf(log_file, "<pre>\nERROR: index %d. Expexted + or -, but is: %c\n</pre>", text->index, op);
+            return NULL;
+        }
+
+    }
+
+    return node1;
+}
+
+
+node_t * get_t(text_t * text)
+{
+    node_t * node1 = get_p(text);
+
+    while (text->text_buff[text->index] == '*' || text->text_buff[text->index] == '/' || text->text_buff[text->index] == '^')
+    {
+        int op = text->text_buff[text->index];
+        text->index++;
+
+        node_t * node2 = get_p(text);
+
+        if      (op == '*') node1 = new_op(OP_MUL, node1, node2);
+        else if (op == '/') node1 = new_op(OP_DIV, node1, node2);
+        else if (op == '^') node1 = new_op(FUNC_POW, node1, node2);
+        else    
+        {
+            fprintf(log_file, "<pre>\nERROR: index %d. Expexted + or -, but is: %c\n</pre>", text->index, op);
+            return NULL;
+        }
+    }    
+
+    return node1;
+}
+
+
+node_t * get_p(text_t * text)
+{
+    if (text->text_buff[text->index] == '(')
+    {
+        text->index++;
+
+        node_t * node = get_e(text);
+
+        if (text->text_buff[text->index] != ')')
+        {
+            fprintf(log_file, "<pre>\nERROR: index %d. Expexted ) but is: %c\n</pre>", text->index, text->text_buff[text->index]);
+            return NULL;
+        }
+
+        text->index++;
+
+        return node;
+    }
+    
+    return get_n(text);
+}
+
+
+node_t * get_n(text_t * text)
+{
+    int p = text->index;
+    int val = 0;
+
+    while (text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9')
+    {
+        val = val * 10 + text->text_buff[text->index] - '0';
+        text->index++;
+    }
+
+    if (p == text->index && text->text_buff[text->index + 1] >= '0' && text->text_buff[text->index + 1] <= '9')
+    {
+        text->index++;
+        
+        while (text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9')
+        {
+            val = val * 10 + text->text_buff[text->index] - '0';
+            text->index++;
+        }
+        
+        val *= -1;
+    }
+
+    if (p == text->index)
+    {
+        fprintf(log_file, "<pre>\nERROR: index %d. Expexted number but is: %c\n</pre>", text->index, text->text_buff[text->index]);
+        return NULL;
+    }
+
+    return new_num(val);
+}
