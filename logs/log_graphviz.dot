@@ -1,24 +1,12 @@
 digraph
 {
-    node_0x604000000010[shape = Mrecord, label = "{{0x604000000010} | {parent - 0x604000000290} | {num} | {value = -10} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x604000000050[shape = Mrecord, label = "{{0x604000000050} | {parent - 0x604000000250} | {num} | {value = 256} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x604000000090[shape = Mrecord, label = "{{0x604000000090} | {parent - 0x604000000110} | {num} | {value = 2} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x6040000000d0[shape = Mrecord, label = "{{0x6040000000d0} | {parent - 0x604000000110} | {num} | {value = 4} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x604000000110[shape = Mrecord, label = "{{0x604000000110} | {parent - 0x604000000210} | {^} | {0x604000000090|0x6040000000d0}}", style = "filled", fillcolor = "#FDDB6D"];
-    node_0x604000000150[shape = Mrecord, label = "{{0x604000000150} | {parent - 0x6040000001d0} | {num} | {value = 2} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x604000000190[shape = Mrecord, label = "{{0x604000000190} | {parent - 0x6040000001d0} | {num} | {value = 2} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x6040000001d0[shape = Mrecord, label = "{{0x6040000001d0} | {parent - 0x604000000210} | {*} | {value = 57005} | {0x604000000150|0x604000000190}}", style = "filled", fillcolor = "#ACABF2"];
-    node_0x604000000210[shape = Mrecord, label = "{{0x604000000210} | {parent - 0x604000000250} | {-} | {value = 57005} | {0x604000000110|0x6040000001d0}}", style = "filled", fillcolor = "#8CCB5E"];
-    node_0x604000000250[shape = Mrecord, label = "{{0x604000000250} | {parent - 0x604000000290} | {/} | {value = 57005} | {0x604000000050|0x604000000210}}", style = "filled", fillcolor = "#ACABF2"];
-    node_0x604000000290[shape = Mrecord, label = "{{0x604000000290} | {parent - (nil)} | {+} | {value = 57005} | {0x604000000010|0x604000000250}}", style = "filled", fillcolor = "#8CCB5E"];
-    node_0x604000000290->node_0x604000000010 [color = "#F80000"];
-    node_0x604000000290->node_0x604000000250 [color = "#F80000"];
-    node_0x604000000250->node_0x604000000050 [color = "#F80000"];
-    node_0x604000000250->node_0x604000000210 [color = "#F80000"];
-    node_0x604000000210->node_0x604000000110 [color = "#F80000"];
-    node_0x604000000110->node_0x604000000090 [color = "#F80000"];
+    node_0x604000000010[shape = Mrecord, label = "{{0x604000000010} | {parent - 0x604000000110} | {num} | {value = 8} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
+    node_0x604000000050[shape = Mrecord, label = "{{0x604000000050} | {parent - 0x6040000000d0} | {num} | {value = 4} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
+    node_0x604000000090[shape = Mrecord, label = "{{0x604000000090} | {parent - 0x6040000000d0} | {num} | {value = 4} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
+    node_0x6040000000d0[shape = Mrecord, label = "{{0x6040000000d0} | {parent - 0x604000000110} | {^} | {0x604000000050|0x604000000090}}", style = "filled", fillcolor = "#FDDB6D"];
+    node_0x604000000110[shape = Mrecord, label = "{{0x604000000110} | {parent - (nil)} | {/} | {value = 57005} | {0x604000000010|0x6040000000d0}}", style = "filled", fillcolor = "#ACABF2"];
+    node_0x604000000110->node_0x604000000010 [color = "#F80000"];
     node_0x604000000110->node_0x6040000000d0 [color = "#F80000"];
-    node_0x604000000210->node_0x6040000001d0 [color = "#F80000"];
-    node_0x6040000001d0->node_0x604000000150 [color = "#F80000"];
-    node_0x6040000001d0->node_0x604000000190 [color = "#F80000"];
+    node_0x6040000000d0->node_0x604000000050 [color = "#F80000"];
+    node_0x6040000000d0->node_0x604000000090 [color = "#F80000"];
 }

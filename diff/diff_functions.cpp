@@ -478,24 +478,39 @@ node_t * get_e(text_t * text)
 
 node_t * get_t(text_t * text)
 {
-    node_t * node1 = get_p(text);
+    node_t * node1 = get_d(text);
 
-    while (text->text_buff[text->index] == '*' || text->text_buff[text->index] == '/' || text->text_buff[text->index] == '^')
+    while (text->text_buff[text->index] == '*' || text->text_buff[text->index] == '/')
     {
         int op = text->text_buff[text->index];
         text->index++;
 
-        node_t * node2 = get_p(text);
+        node_t * node2 = get_d(text);
 
         if      (op == '*') node1 = new_op(OP_MUL, node1, node2);
         else if (op == '/') node1 = new_op(OP_DIV, node1, node2);
-        else if (op == '^') node1 = new_op(FUNC_POW, node1, node2);
         else    
         {
-            fprintf(log_file, "<pre>\nERROR: index %d. Expexted + or -, but is: %c\n</pre>", text->index, op);
+            fprintf(log_file, "<pre>\nERROR: index %d. Expexted * or /, but is: %c\n</pre>", text->index, op);
             return NULL;
         }
     }    
+
+    return node1;
+}
+
+
+node_t * get_d(text_t * text)
+{
+    node_t * node1 = get_p(text);
+
+    if (text->text_buff[text->index] == '^')
+    {
+        text->index++;
+        node_t * node2 = get_p(text);
+
+        node1 = new_func(FUNC_POW, node1, node2);
+    }
 
     return node1;
 }

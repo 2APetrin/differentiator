@@ -94,3 +94,8 @@ node_t * get_p(text_t * text);
 //! @brief gets number from buffer
 //!
 node_t * get_n(text_t * text);
+
+
+//! @brief gets degree of expression
+//!
+node_t * get_d(text_t * text);
