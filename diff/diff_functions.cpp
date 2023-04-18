@@ -1,6 +1,7 @@
 #include "diff_header.h"
 #include "../tree/logs_header.h"
 #include "../diff_DSL/DSL_header.h"
+#include <math.h>
 
 
 int text_ctor(text_t * text, FILE * stream)
@@ -341,6 +342,13 @@ elem eval(node_t * node)
                 fprintf(log_file, "<pre>ERROR in eval: NULL ptr in children of /\n</pre>");
                 return NAN;
             
+            case FUNC_POW:
+                if (Lc && Rc)
+                    return (pow(eval(Lc), eval(Rc)));
+                
+                fprintf(log_file, "<pre>ERROR in eval: NULL ptr in children of ^\n</pre>");
+                return NAN;
+            
             default:
                 break;
         }
@@ -443,6 +451,7 @@ node_t * get_g(text_t * text)
     if (text->text_buff[text->index] != '$')
     {
         fprintf(log_file, "<pre>\nERROR: index %d. Expexted $, but is: %c\n</pre>", text->index, text->text_buff[text->index]);
+        tree_free(node);
         return NULL;
     }
 
@@ -542,26 +551,47 @@ node_t * get_p(text_t * text)
 node_t * get_n(text_t * text)
 {
     int p = text->index;
-    int val = 0;
+    int multplr = 1;
+    elem val = 0.0;
 
-    while (text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9')
+    if (text->text_buff[text->index] == '-')
     {
-        val = val * 10 + text->text_buff[text->index] - '0';
+        multplr = -1; 
         text->index++;
+        //printf("cock, %d\n", text->index);
     }
 
-    if (p == text->index && text->text_buff[text->index + 1] >= '0' && text->text_buff[text->index + 1] <= '9')
+    int int_part = 1;
+    int count = 10;
+    while (text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9' || text->text_buff[text->index] == '.')
     {
-        text->index++;
-        
-        while (text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9')
+        if (int_part && text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9')
         {
             val = val * 10 + text->text_buff[text->index] - '0';
             text->index++;
         }
-        
-        val *= -1;
+
+        if (!int_part)
+        {
+            val += (text->text_buff[text->index] - '0') / (double) count;
+            count *= 10;
+            text->index++;
+        }
+
+        if (text->text_buff[text->index] == '.' && int_part)
+        {
+            if (!(text->text_buff[text->index + 1] >= '0' && text->text_buff[text->index + 1] <= '9'))
+            {
+                fprintf(log_file, "\nERROR: index - %d, After . expected number. But get %c\n", text->index, text->text_buff[text->index + 1]);
+                return NULL;
+            }
+            
+            text->index++;
+            int_part = 0;
+
+        }
     }
+    //printf("%lg\n", val);
 
     if (p == text->index)
     {
@@ -569,5 +599,8 @@ node_t * get_n(text_t * text)
         return NULL;
     }
 
-    return new_num(val);
+    if (equald(0.0, val))
+        return new_num(0.0);
+
+    return new_num(val * multplr);
 }

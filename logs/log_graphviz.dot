@@ -1,12 +1,16 @@
 digraph
 {
-    node_0x604000000010[shape = Mrecord, label = "{{0x604000000010} | {parent - 0x604000000110} | {num} | {value = 8} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x604000000050[shape = Mrecord, label = "{{0x604000000050} | {parent - 0x6040000000d0} | {num} | {value = 4} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x604000000090[shape = Mrecord, label = "{{0x604000000090} | {parent - 0x6040000000d0} | {num} | {value = 4} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
+    node_0x604000000010[shape = Mrecord, label = "{{0x604000000010} | {parent - 0x604000000110} | {num} | {value = 2} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
+    node_0x604000000050[shape = Mrecord, label = "{{0x604000000050} | {parent - 0x6040000000d0} | {num} | {value = 2} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
+    node_0x604000000090[shape = Mrecord, label = "{{0x604000000090} | {parent - 0x6040000000d0} | {num} | {value = 3} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
     node_0x6040000000d0[shape = Mrecord, label = "{{0x6040000000d0} | {parent - 0x604000000110} | {^} | {0x604000000050|0x604000000090}}", style = "filled", fillcolor = "#FDDB6D"];
-    node_0x604000000110[shape = Mrecord, label = "{{0x604000000110} | {parent - (nil)} | {/} | {value = 57005} | {0x604000000010|0x6040000000d0}}", style = "filled", fillcolor = "#ACABF2"];
+    node_0x604000000110[shape = Mrecord, label = "{{0x604000000110} | {parent - 0x604000000190} | {^} | {0x604000000010|0x6040000000d0}}", style = "filled", fillcolor = "#FDDB6D"];
+    node_0x604000000150[shape = Mrecord, label = "{{0x604000000150} | {parent - 0x604000000190} | {num} | {value = 127} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
+    node_0x604000000190[shape = Mrecord, label = "{{0x604000000190} | {parent - (nil)} | {/} | {value = 57005} | {0x604000000110|0x604000000150}}", style = "filled", fillcolor = "#ACABF2"];
+    node_0x604000000190->node_0x604000000110 [color = "#F80000"];
     node_0x604000000110->node_0x604000000010 [color = "#F80000"];
     node_0x604000000110->node_0x6040000000d0 [color = "#F80000"];
     node_0x6040000000d0->node_0x604000000050 [color = "#F80000"];
     node_0x6040000000d0->node_0x604000000090 [color = "#F80000"];
+    node_0x604000000190->node_0x604000000150 [color = "#F80000"];
 }

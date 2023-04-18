@@ -21,6 +21,8 @@ int main(void)
     tree_ctor(&tree);
     make_tree_in_order(&tree, &text);
 
+    printf("tree equals to %lg\n", eval(tree.root));
+
     tree_dtor(&tree);
     text_dtor(&text);
     close_log_file();
