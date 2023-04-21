@@ -1,5 +1,6 @@
 #pragma once
 #include "../tree/tree_header.h"
+#include "ctype.h"
 
 //! @brief struct with our code
 //!
@@ -19,6 +20,9 @@ enum read_mode
     READ_PRE_ORDER  = 1,
     READ_POST_ORDER = 2
 };
+
+
+const int max_word_length = 20;
 
 
 //! @brief gets text buffer
@@ -99,3 +103,28 @@ node_t * get_n(text_t * text);
 //! @brief gets degree of expression
 //!
 node_t * get_d(text_t * text);
+
+
+//! @brief gets func word from buffer
+//!
+node_t * get_w(text_t * text);
+
+
+//! @brief gets type of word that was read
+//!
+node_type get_type_from_word(char * word);
+
+
+//! @brief checks if subtree has variable in it
+//!
+int subtree_var_check(node_t * node);
+
+
+//! @brief simplifies tree
+//! 
+int tree_simplify(tree_t * tree);
+
+
+//! @brief simplifies subtree
+//! 
+int subtree_simplify(node_t ** node);

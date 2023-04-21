@@ -295,6 +295,27 @@ node_type get_type_from_cmd(char * cmd)
 }
 
 
+node_type get_type_from_word(char * word)
+{
+    if (!strcmp(word, "exp"))
+        return FUNC_EXP;
+    
+    if (!strcmp(word, "sin"))
+        return FUNC_SIN;
+    
+    if (!strcmp(word, "cos"))
+        return FUNC_COS;
+
+    if (!strcmp(word, "log"))
+        return FUNC_LOG;
+    
+    if (!strcmp(word, "ln"))
+        return FUNC_LN;
+    
+    return ERROR;
+}
+
+
 elem eval(node_t * node)
 {
     if (!node)
@@ -303,10 +324,10 @@ elem eval(node_t * node)
     node_t * Lc = node->left_child;
     node_t * Rc = node->right_child;
 
-    if (!node->type) //num
+    if (node->type == TYPE_NUM) //num
         return node->value;
     
-    else             //operator
+    else             //operators and funcs
     {
         switch (node->type)
         {
@@ -347,6 +368,36 @@ elem eval(node_t * node)
                     return (pow(eval(Lc), eval(Rc)));
                 
                 fprintf(log_file, "<pre>ERROR in eval: NULL ptr in children of ^\n</pre>");
+                return NAN;
+            
+            case FUNC_COS:
+                if (Rc) return cos(eval(Rc));
+
+                fprintf(log_file, "<pre>ERROR in eval: NULL ptr in children of COS\n</pre>");
+                return NAN;
+            
+            case FUNC_EXP:
+                if (Rc) return exp(eval(Rc));
+
+                fprintf(log_file, "<pre>ERROR in eval: NULL ptr in children of EXP\n</pre>");
+                return NAN;
+                
+            case FUNC_LN:
+                if (Rc) return log(eval(Rc));
+
+                fprintf(log_file, "<pre>ERROR in eval: NULL ptr in children of LN\n</pre>");
+                return NAN;
+            
+            case FUNC_LOG:
+                if (Lc && Rc) return (log(eval(Rc)) / log(eval(Lc)));
+
+                fprintf(log_file, "<pre>ERROR in eval: NULL ptr in children of LOG\n</pre>");
+                return NAN;
+            
+            case FUNC_SIN:
+                if (Rc) return sin(eval(Rc));
+
+                fprintf(log_file, "<pre>ERROR in eval: NULL ptr in children of SIN\n</pre>");
                 return NAN;
             
             default:
@@ -544,7 +595,67 @@ node_t * get_p(text_t * text)
         return node;
     }
     
-    return get_n(text);
+    else if (text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9' || text->text_buff[text->index] == '.')
+        return get_n(text);
+    
+    else
+        return get_w(text);
+    
+    return NULL;
+}
+
+
+node_t * get_w(text_t * text)
+{
+    int count = 0;
+    int p     = text->index;
+
+    char word[max_word_length] = {0};
+
+    while (isalpha(text->text_buff[text->index]))
+    {
+        if (count == max_word_length - 1)
+        {
+            fprintf(log_file, "ERROR in getting, index - %d: word is too long - %s\n", text->index, word);
+            return NULL;
+        }
+
+        word[count] = text->text_buff[text->index];
+        text->index++;
+        count++;
+    }
+
+    if (p == text->index)
+    {
+        fprintf(log_file, "ERROR in getting word: nothing was read. And it is not a number too. Index - %d\n", text->index);
+        return NULL;
+    }    
+
+    node_type type = get_type_from_word(word);
+    //printf("word - %s0\ntype - %d\n", word, type);
+
+
+    if (type == ERROR)
+    {
+        if (strlen(word) == 1 && isalpha(word[0]))
+        {
+            return new_var(word[0]);
+        }
+
+        fprintf(log_file, "ERROR in get word. index - %d: lond wariable naming is not available - %s\n", text->index, word);
+        return NULL;
+    }
+
+    if (type == FUNC_LOG)
+    {
+        node_t * node1 = get_p(text);
+        return new_func(type, node1, get_p(text));
+    }
+
+    return new_func(type, NULL, get_p(text)); 
+
+    fprintf(log_file, "ERROR in get word. index - %d: unknown error. word - %s\n", text->index, word);
+    return NULL;
 }
 
 
@@ -594,13 +705,57 @@ node_t * get_n(text_t * text)
     //printf("%lg\n", val);
 
     if (p == text->index)
-    {
-        fprintf(log_file, "<pre>\nERROR: index %d. Expexted number but is: %c\n</pre>", text->index, text->text_buff[text->index]);
         return NULL;
-    }
 
     if (equald(0.0, val))
         return new_num(0.0);
 
     return new_num(val * multplr);
+}
+
+
+int subtree_var_check(node_t * node)
+{
+    if (!node)
+        return 0;
+
+    if (node->type == TYPE_VAR)
+        return 1;
+    
+    if (node->type == TYPE_NUM)
+        return 0;
+    
+    return subtree_var_check(node->left_child) || subtree_var_check(node->right_child);
+}
+
+
+int tree_simplify(tree_t * tree)
+{
+    ASSERT(tree);
+
+    subtree_simplify(&tree->root);
+    return 0;
+}
+
+
+int subtree_simplify(node_t ** node)
+{
+    if (!(*node)) return 0;
+
+    if ((*node)->type == TYPE_NUM || (*node)->type == TYPE_VAR)
+        return 0;
+    
+    subtree_simplify(&((*node)->left_child));
+    subtree_simplify(&((*node)->right_child));
+    
+    if (!subtree_var_check(*node))
+    {
+        node_t * old_ptr = *node;
+        *node = new_num(eval(*node));
+        tree_free(old_ptr);
+    }
+
+    //if (!subtree_var_check((*node)->right_child) && !subtree_var_check(((*node)->left_child)->left_child) && (((*node)->type == OP_ADD || (*node)->type == OP_SUB) && ((*node)->left_child->type == OP_ADD || (*node)->left_child->type == OP_SUB) || ((*node)->type == OP_DIV || (*node)->type == OP_MUL) && ((*node)->left_child->type == OP_DIV || (*node)->left_child->type == OP_MUL)))
+
+    return 0;
 }

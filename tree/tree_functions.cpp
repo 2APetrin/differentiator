@@ -86,14 +86,14 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
 
     else //функции
     {
-        if (!(node1 && node2))
-        {
-            fprintf(log_file, "<pre>\nerror: create_node - one of children is null (function)\n</pre>");
-            return NULL;
-        }
-
         if (type == FUNC_POW || type == FUNC_LOG)
         {
+            if (!(node1 && node2))
+            {
+                fprintf(log_file, "<pre>\nerror: create_node - one of children is null (functions pow and log)\n</pre>");
+                return NULL;
+            }
+
             new_node->left_child  = node1;
             new_node->right_child = node2;
 
