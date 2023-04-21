@@ -753,6 +753,30 @@ int subtree_simplify(node_t ** node)
         node_t * old_ptr = *node;
         *node = new_num(eval(*node));
         tree_free(old_ptr);
+
+        return 0;
+    }
+
+    if ((*node)->type == OP_MUL && ((*node)->left_child->value == 1 || (*node)->right_child->value == 1) && ((*node)->left_child->value != 1 || (*node)->right_child->value != 1))
+    {
+        node_t * old_ptr = *node;
+        
+        if ((*node)->left_child->value == 1)
+        {
+            *node = copy_subtree((*node)->right_child);
+            tree_free(old_ptr);
+
+            return 0;
+        }
+
+        else
+        {
+            *node = copy_subtree((*node)->left_child);
+            tree_free(old_ptr);
+
+            return 0;
+        }
+
     }
 
     //if (!subtree_var_check((*node)->right_child) && !subtree_var_check(((*node)->left_child)->left_child) && (((*node)->type == OP_ADD || (*node)->type == OP_SUB) && ((*node)->left_child->type == OP_ADD || (*node)->left_child->type == OP_SUB) || ((*node)->type == OP_DIV || (*node)->type == OP_MUL) && ((*node)->left_child->type == OP_DIV || (*node)->left_child->type == OP_MUL)))

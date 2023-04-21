@@ -1,30 +1,8 @@
 digraph
 {
-    node_0x604000000050[shape = Mrecord, label = "{{0x604000000050} | {parent - 0x604000000150} | {num} | {value = 10} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x604000000090[shape = Mrecord, label = "{{0x604000000090} | {parent - 0x604000000110} | {var} | {x} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FF9ED5"];
-    node_0x6040000000d0[shape = Mrecord, label = "{{0x6040000000d0} | {parent - 0x604000000110} | {num} | {value = 24} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x604000000110[shape = Mrecord, label = "{{0x604000000110} | {parent - 0x604000000150} | {^} | {0x604000000090|0x6040000000d0}}", style = "filled", fillcolor = "#FDDB6D"];
-    node_0x604000000150[shape = Mrecord, label = "{{0x604000000150} | {parent - 0x6040000003d0} | {-} | {value = 57005} | {0x604000000050|0x604000000110}}", style = "filled", fillcolor = "#8CCB5E"];
-    node_0x604000000810[shape = Mrecord, label = "{{0x604000000810} | {parent - (nil)} | {num} | {value = 2} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x6040000003d0[shape = Mrecord, label = "{{0x6040000003d0} | {parent - 0x604000000710} | {+} | {value = 57005} | {0x604000000150|0x604000000810}}", style = "filled", fillcolor = "#8CCB5E"];
-    node_0x604000000410[shape = Mrecord, label = "{{0x604000000410} | {parent - 0x604000000490} | {var} | {x} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FF9ED5"];
-    node_0x604000000450[shape = Mrecord, label = "{{0x604000000450} | {parent - 0x604000000490} | {var} | {x} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FF9ED5"];
-    node_0x604000000490[shape = Mrecord, label = "{{0x604000000490} | {parent - 0x604000000690} | {^} | {0x604000000410|0x604000000450}}", style = "filled", fillcolor = "#FDDB6D"];
-    node_0x6040000008d0[shape = Mrecord, label = "{{0x6040000008d0} | {parent - (nil)} | {num} | {value = 11} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FAEEDD"];
-    node_0x604000000690[shape = Mrecord, label = "{{0x604000000690} | {parent - 0x6040000006d0} | {*} | {value = 57005} | {0x604000000490|0x6040000008d0}}", style = "filled", fillcolor = "#ACABF2"];
-    node_0x6040000006d0[shape = Mrecord, label = "{{0x6040000006d0} | {parent - 0x604000000710} | {exp} | {(nil)|0x604000000690}}", style = "filled", fillcolor = "#FDDB6D"];
-    node_0x604000000710[shape = Mrecord, label = "{{0x604000000710} | {parent - (nil)} | {+} | {value = 57005} | {0x6040000003d0|0x6040000006d0}}", style = "filled", fillcolor = "#8CCB5E"];
-    node_0x604000000710->node_0x6040000003d0 [color = "#F80000"];
-    node_0x6040000003d0->node_0x604000000150 [color = "#F80000"];
-    node_0x604000000150->node_0x604000000050 [color = "#F80000"];
-    node_0x604000000150->node_0x604000000110 [color = "#F80000"];
-    node_0x604000000110->node_0x604000000090 [color = "#F80000"];
-    node_0x604000000110->node_0x6040000000d0 [color = "#F80000"];
-    node_0x6040000003d0->node_0x604000000810 [color = "#F80000"];
-    node_0x604000000710->node_0x6040000006d0 [color = "#F80000"];
-    node_0x6040000006d0->node_0x604000000690 [color = "#F80000"];
-    node_0x604000000690->node_0x604000000490 [color = "#F80000"];
-    node_0x604000000490->node_0x604000000410 [color = "#F80000"];
-    node_0x604000000490->node_0x604000000450 [color = "#F80000"];
-    node_0x604000000690->node_0x6040000008d0 [color = "#F80000"];
+    node_0x604000000010[shape = Mrecord, label = "{{0x604000000010} | {parent - 0x604000000090} | {var} | {x} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FF9ED5"];
+    node_0x604000000050[shape = Mrecord, label = "{{0x604000000050} | {parent - 0x604000000090} | {var} | {x} | {(nil)|(nil)}}", style = "filled", fillcolor = "#FF9ED5"];
+    node_0x604000000090[shape = Mrecord, label = "{{0x604000000090} | {parent - (nil)} | {^} | {0x604000000010|0x604000000050}}", style = "filled", fillcolor = "#FDDB6D"];
+    node_0x604000000090->node_0x604000000010 [color = "#F80000"];
+    node_0x604000000090->node_0x604000000050 [color = "#F80000"];
 }

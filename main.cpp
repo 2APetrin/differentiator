@@ -27,7 +27,12 @@ int main(void)
 
     //printf("tree equals to %lg\n", eval(tree.root));
 
+    node_t * diff_tree = diff(tree.root);
+    subtree_simplify(&diff_tree);
+    subtree_dump(diff_tree);
+
     tree_dtor(&tree);
+    tree_free(diff_tree);
     text_dtor(&text);
     close_log_file();
     return 0;
