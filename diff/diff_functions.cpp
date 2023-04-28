@@ -358,14 +358,49 @@ elem eval(node_t * node)
             
             case OP_DIV:
                 if (Lc && Rc)
-                    return (eval(Lc) / eval(Rc));
+                {
+                    elem val_r = eval(Rc);
+                    elem val_l = eval(Lc);
+
+                    if (!equald(val_r, 0))
+                        return (val_l / val_r);
+                    
+                    else
+                    {
+                        fprintf(log_file, "<pre>\nERROR in eval: division by zero. Top in frac is %lg\n<pre/>", val_l);
+                        return NAN;
+                    }
+                }
+                    
                 
                 fprintf(log_file, "<pre>ERROR in eval: NULL ptr in children of /\n</pre>");
                 return NAN;
             
             case FUNC_POW:
                 if (Lc && Rc)
-                    return (pow(eval(Lc), eval(Rc)));
+                {
+                    elem val_r = eval(Rc);
+                    elem val_l = eval(Lc);
+
+                    if (equald(val_l, 0))
+                        return (0);
+                    
+                    else if (val_r < 0)
+                    {
+                        fprintf(log_file, "<pre>\nERROR in eval: division by zero. 0^(num<0)\n<pre/>");
+                        printf("division by zero: 0^(num<0)\n");
+                        return NAN;
+                    }
+
+                    if (val_l < 0)
+                    {
+                        fprintf(log_file, "<pre>\nERROR in eval: num for pow is negative. It's illegal here\n<pre/>");
+                        printf("ERROR in eval: num for pow is negative. It's illegal here\n");
+                        return NAN;
+                    }
+
+                    return pow(val_l, val_r);
+                }
                 
                 fprintf(log_file, "<pre>ERROR in eval: NULL ptr in children of ^\n</pre>");
                 return NAN;
@@ -595,7 +630,7 @@ node_t * get_p(text_t * text)
         return node;
     }
     
-    else if (text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9' || text->text_buff[text->index] == '.')
+    else if ((text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9') || text->text_buff[text->index] == '.' || text->text_buff[text->index] == '-')
         return get_n(text);
     
     else
@@ -674,7 +709,7 @@ node_t * get_n(text_t * text)
 
     int int_part = 1;
     int count = 10;
-    while (text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9' || text->text_buff[text->index] == '.')
+    while ((text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9') || text->text_buff[text->index] == '.')
     {
         if (int_part && text->text_buff[text->index] >= '0' && text->text_buff[text->index] <= '9')
         {
@@ -747,21 +782,20 @@ int subtree_simplify(node_t ** node)
     
     subtree_simplify(&((*node)->left_child));
     subtree_simplify(&((*node)->right_child));
+
+    node_t * old_ptr = *node;
     
     if (!subtree_var_check(*node))
     {
-        node_t * old_ptr = *node;
         *node = new_num(eval(*node));
         tree_free(old_ptr);
 
         return 0;
     }
 
-    if ((*node)->type == OP_MUL && ((*node)->left_child->value == 1 || (*node)->right_child->value == 1) && ((*node)->left_child->value != 1 || (*node)->right_child->value != 1))
+    if ((*node)->type == OP_MUL && (LEFT_VAL_IS(1) || RIGHT_VAL_IS(1)))
     {
-        node_t * old_ptr = *node;
-        
-        if ((*node)->left_child->value == 1)
+        if (LEFT_VAL_IS(1))
         {
             *node = copy_subtree((*node)->right_child);
             tree_free(old_ptr);
@@ -776,10 +810,135 @@ int subtree_simplify(node_t ** node)
 
             return 0;
         }
-
     }
 
-    //if (!subtree_var_check((*node)->right_child) && !subtree_var_check(((*node)->left_child)->left_child) && (((*node)->type == OP_ADD || (*node)->type == OP_SUB) && ((*node)->left_child->type == OP_ADD || (*node)->left_child->type == OP_SUB) || ((*node)->type == OP_DIV || (*node)->type == OP_MUL) && ((*node)->left_child->type == OP_DIV || (*node)->left_child->type == OP_MUL)))
+    if ((*node)->type == OP_MUL && (LEFT_VAL_IS(0) || RIGHT_VAL_IS(0)))
+    {
+        *node = new_num(0);
+        tree_free(old_ptr);
+
+        return 0;
+    }
+
+    if ((*node)->type == OP_ADD && (LEFT_VAL_IS(0) || RIGHT_VAL_IS(0)))
+    {
+        if (LEFT_VAL_IS(0))
+        {
+            *node = copy_subtree((*node)->right_child);
+            tree_free(old_ptr);
+
+            return 0;
+        }
+
+        else
+        {
+            *node = copy_subtree((*node)->left_child);
+            tree_free(old_ptr);
+
+            return 0;
+        }
+    }
+
+    if ((*node)->type == OP_SUB && (LEFT_VAL_IS(0) || RIGHT_VAL_IS(0)))
+    {
+        if (LEFT_VAL_IS(0))
+        {
+            *node =  MUL(new_num(-1), copy_subtree((*node)->right_child));
+            tree_free(old_ptr);
+
+            return 0;
+        }
+
+        else
+        {
+            *node = copy_subtree((*node)->left_child);
+            tree_free(old_ptr);
+            
+            return 0;
+        }
+    }
+
+    if ((*node)->type == OP_DIV && (LEFT_VAL_IS(0) || RIGHT_VAL_IS(0)))
+    {
+        if (RIGHT_VAL_IS(0))
+        {
+            printf("division by zero\n");
+            *node = new_num(NAN);
+            tree_free(old_ptr);
+
+            return 0;
+        }
+
+        else
+        {
+            *node = new_num(0);
+            tree_free(old_ptr);
+
+            return 0;
+        }
+    }
+
+    if ((*node)->type == OP_DIV && RIGHT_VAL_IS(1))
+    {
+        *node = copy_subtree((*node)->left_child);
+        tree_free(old_ptr);
+
+        return 0;
+    }
+
+    if ((*node)->type == FUNC_POW && (LEFT_VAL_IS(0) || RIGHT_VAL_IS(0)))
+    {
+        if (LEFT_VAL_IS(0) && RIGHT_VAL_IS(0))
+        {
+            *node = new_num(1);
+            tree_free(old_ptr);
+
+            return 0;
+        }
+
+        if (LEFT_VAL_IS(0) && (*node)->right_child->value > 0)
+        {
+            *node = new_num(0);
+            tree_free(old_ptr);
+
+            return 0;
+        }
+
+        if (LEFT_VAL_IS(0) && (*node)->right_child->value < 0)
+        {
+            printf("division by zero: 0^(num<0)\n");
+            *node = new_num(NAN);
+            tree_free(old_ptr);
+
+            return 0;
+
+            return 0;
+        }
+
+        if (RIGHT_VAL_IS(0))
+        {
+            *node = new_num(1);
+            tree_free(old_ptr);
+
+            return 0;
+        }
+    }
+
+    if ((*node)->type == FUNC_POW && LEFT_VAL_IS(1))
+    {
+        *node = new_num(1);
+        tree_free(old_ptr);
+
+        return 0;
+    }
+
+    if ((*node)->type == FUNC_POW && RIGHT_VAL_IS(1))
+    {
+        *node = copy_subtree((*node)->left_child);
+        tree_free(old_ptr);
+
+        return 0;
+    }
 
     return 0;
 }

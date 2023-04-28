@@ -137,7 +137,7 @@ int tree_dtor(tree_t * tree)
 {
     ASSERT(tree);
 
-    tree_dump(tree);
+    //tree_dump(tree);
 
     tree_free(tree->root);
         

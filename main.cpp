@@ -23,12 +23,16 @@ int main(void)
 
     printf("%d\n", subtree_var_check(tree.root));
     subtree_simplify(&tree.root);
+    subtree_simplify(&tree.root);
+    subtree_simplify(&tree.root);
     tree_dump(&tree);
 
     //printf("tree equals to %lg\n", eval(tree.root));
 
     node_t * diff_tree = diff(tree.root);
     subtree_simplify(&diff_tree);
+    subtree_simplify(&tree.root);
+    subtree_simplify(&tree.root);
     subtree_dump(diff_tree);
 
     tree_dtor(&tree);

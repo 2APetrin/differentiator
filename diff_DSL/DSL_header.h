@@ -26,3 +26,6 @@
 
 #define LOG_CONST node->left_child->type == TYPE_NUM && node->right_child->type == TYPE_NUM
 #define LOG_ONLY_ARG_X 
+
+#define LEFT_VAL_IS(num)  (equald((*node)->left_child->value, (num)))
+#define RIGHT_VAL_IS(num) (equald((*node)->right_child->value, (num)))
