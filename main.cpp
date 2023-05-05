@@ -1,6 +1,7 @@
 #include "tree/tree_header.h"
 #include "tree/logs_header.h"
 #include "diff/diff_header.h"
+#include "latex/latex_header.h"
 
 //спросить деда про баг с переменой мест в сreate subtree
 
@@ -21,23 +22,15 @@ int main(void)
     tree_ctor(&tree);
     make_tree_in_order(&tree, &text);
 
-    printf("%d\n", subtree_var_check(tree.root));
-    subtree_simplify(&tree.root);
-    subtree_simplify(&tree.root);
-    subtree_simplify(&tree.root);
-    tree_dump(&tree);
+    open_latex_file();
+    init_latex_file();
 
-    //printf("tree equals to %lg\n", eval(tree.root));
-
-    node_t * diff_tree = diff(tree.root);
-    subtree_simplify(&diff_tree);
-    subtree_simplify(&tree.root);
-    subtree_simplify(&tree.root);
-    subtree_dump(diff_tree);
+    
 
     tree_dtor(&tree);
-    tree_free(diff_tree);
     text_dtor(&text);
     close_log_file();
+    
+    latex_create_pdf();
     return 0;
 }

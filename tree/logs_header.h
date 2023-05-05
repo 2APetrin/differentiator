@@ -133,11 +133,6 @@ int get_color(node_type type);
 const char * get_type(node_type type);
 
 
-//! @brief verifies our tree
-//!
-int tree_verify(tree_t * tree);
-
-
 //! @brief writes dump of subtree into log file
 //!
 int subtree_dump_(node_t * root, location_info info);

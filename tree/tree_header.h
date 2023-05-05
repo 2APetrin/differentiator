@@ -6,6 +6,7 @@
 
 #define LOCATION __PRETTY_FUNCTION__, __FILE__, __LINE__
 #define tree_ctor(tree) tree_ctor_((tree), {(#tree), LOCATION})
+#define tree_verify(tree) if(_tree_verify((tree), {LOCATION})) return 1
 
 
 //! @brief type of out node values
@@ -96,6 +97,15 @@ typedef struct
 } tree_t;
 
 
+//! @brief error codes for our tree verificator
+//!
+enum error_codes
+{
+    NULL_ROOT  = (1<<0),
+    BAD_STATUS = (1<<1)
+};
+
+
 //! @brief accuracy for equald
 //!
 const double EPSYLON = 0.000001;
@@ -181,3 +191,13 @@ node_t * new_var(int name);
 //! @brief checks if doubles are equal
 //!
 int equald(double val1, double val2);
+
+
+//! @brief handles errors if they are in tree
+//!
+int _tree_verify(tree_t * tree, location_info loc_inf);
+
+
+//! @brief cheks if in tree threre are errors
+//!
+int tree_err_check(tree_t * tree, unsigned * err_count);

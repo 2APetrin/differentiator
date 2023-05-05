@@ -137,6 +137,8 @@ int tree_dtor(tree_t * tree)
 {
     ASSERT(tree);
 
+    tree_verify(tree);
+
     //tree_dump(tree);
 
     tree_free(tree->root);
@@ -251,4 +253,65 @@ int equald(double val1, double val2)
         return 1;
     
     return 0;
+}
+
+
+int _tree_verify(tree_t * tree, location_info loc_inf)
+{
+    ASSERT(tree);
+
+    unsigned error_count = 0;
+
+    int error_number = tree_err_check(tree, &error_count);
+    if (!error_number) return 0;
+
+    unsigned switch_param = 0;
+    int flag = 1;
+
+    for (int i = 0; i < (int) error_count; i++)
+    {
+        switch_param = error_number & (1 << i);
+        switch (switch_param)
+        {
+            case NULL_ROOT:
+                fprintf(log_file, "WARNING in tree check: tree root is null in: file - %s\nfunc - %s\nline - %lu\n", loc_inf.file, loc_inf.func, loc_inf.line);
+                flag = 0;
+                break;
+            
+            case BAD_STATUS:
+                fprintf(log_file, "ERROR: tree status isn't 0 in: file - %s\nfunc - %s\nline - %lu\n", loc_inf.file, loc_inf.func, loc_inf.line);
+                flag = 1;
+                break;
+            
+            default:
+                break;
+        }
+    }
+
+    if (flag) return 1;
+
+    return 0;
+}
+
+
+int tree_err_check(tree_t * tree, unsigned * err_count)
+{
+    ASSERT(tree);
+    ASSERT(err_count);
+
+    int ret_num = 0;
+
+    if (tree->root == NULL)
+    {
+        ret_num += NULL_ROOT;
+        *err_count += 1;
+    }
+
+    if (tree->status != 0)
+    {
+        ret_num += BAD_STATUS;
+        *err_count += 1;
+    }
+
+    return ret_num;
 }

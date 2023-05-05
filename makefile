@@ -2,4 +2,4 @@ FLAGS=-D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-loop-o
 ENUM=-Wswitch-enum
 
 all:
-	g++ $(FLAGS) main.cpp tree/tree_functions.cpp tree/logs_functions.cpp diff/diff_functions.cpp
+	g++ $(FLAGS) main.cpp tree/tree_functions.cpp tree/logs_functions.cpp diff/diff_functions.cpp latex/latex.cpp
