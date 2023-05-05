@@ -161,11 +161,11 @@ int tree_print_dump(node_t * root)
 
     close_graphviz_file();
 
-    char sys_cmd[200] = "dot logs/log_graphviz.dot -Tpng -o logs/list_dump";
+    char sys_cmd[200] = "dot logs/log_graphviz.dot -Tpng -o logs/images/list_dump";
     snprintf(sys_cmd + strlen(sys_cmd), 30, "%d.png", graphviz_png_count);
     system(sys_cmd);
 
-    fprintf(log_file, "\n<img src=\"list_dump%d.png\" width=\"60%%\">\n", graphviz_png_count);
+    fprintf(log_file, "\n<img src=\"images/list_dump%d.png\" width=\"60%%\">\n", graphviz_png_count);
 
     graphviz_png_count++;
 

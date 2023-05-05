@@ -80,10 +80,8 @@ int latex_write_subtree(node_t * node)
     if (!node) fprintf(log_file, "WARNING: trying to write null subtree in latex_write_subtree\n");
 
     fprintf(latex_file, "$");
-
     latex_print_in_order(node);
-
-    fprintf(latex_file, "$\n");
+    fprintf(latex_file, "$\n\n");
 
     return 0;
 }
@@ -121,7 +119,7 @@ int latex_print_in_order(node_t * node)
             else
                 PRINT_LC;
             
-            fprintf(latex_file, "\\cdot");
+            fprintf(latex_file, "\\cdot ");
 
             if (RC_ADD_OR_SUB || RC_VAL_IS(-1))
             {

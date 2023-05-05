@@ -468,6 +468,14 @@ node_t * diff(node_t * node)
         case FUNC_LN:  return MUL(DIV(new_num(1), copyR), RC);
         case FUNC_POW:
         {
+            if (FX_POW_GX)
+            {
+                node_t* ln_cpy_L = LN(copyL);
+                node_t* lnfxdx = diff(ln_cpy_L);
+                tree_free(ln_cpy_L);
+                return MUL(copy, ADD(MUL(RC, LN(copyL)), MUL(lnfxdx, copyR)));
+            }
+
             if (POW_CONST)
                 return new_num(0);
             
@@ -476,9 +484,6 @@ node_t * diff(node_t * node)
 
             if (POW_OF_X)
                 return MUL(MUL(POW(copyL, SUB(copyR, new_num(1))), copyR), LC);
-            
-            if (FX_POW_GX)
-                return MUL(copy, ADD(MUL(RC, LN(copyL)), MUL(DIV(new_num(1), copyL), copyL)));
         }
 
         case FUNC_SIN: return MUL(COS(copyR), RC);
