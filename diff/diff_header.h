@@ -12,6 +12,13 @@ typedef struct
 } text_t;
 
 
+typedef struct
+{
+    char * name;
+    elem   val;
+} var_t;
+
+
 //! @brief types of tree reading modes
 //!
 enum read_mode
@@ -128,3 +135,5 @@ int tree_simplify(tree_t * tree);
 //! @brief simplifies subtree
 //! 
 int subtree_simplify(node_t ** node);
+
+

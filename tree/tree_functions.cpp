@@ -246,9 +246,9 @@ node_t * new_var(int name)
 
 int equald(double val1, double val2)
 {
-    ASSERT(isfinite(val1));
-    ASSERT(isfinite(val2));
-
+    if (!isfinite(val1)) return 0;
+    if (!isfinite(val2)) return 0;
+    
     if (val2 - val1 < EPSYLON && val2 - val1 > -1 * EPSYLON)
         return 1;
     
