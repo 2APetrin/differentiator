@@ -20,7 +20,13 @@ int main(void)
 
     tree_t tree = {};
     tree_ctor(&tree);
-    make_tree_in_order(&tree, &text);
+    if (make_tree_in_order(&tree, &text))
+    {
+        tree_dtor(&tree);
+        text_dtor(&text);
+        close_log_file();
+        return 1;
+    }
     tree_dump(&tree);
 
     open_latex_file();
@@ -40,6 +46,8 @@ int main(void)
     subtree_simplify(&diff_tree);
     subtree_dump(diff_tree);
     latex_write_subtree(diff_tree);
+
+    substitute_var(diff_tree, &text);
 
     tree_free(diff_tree);
     tree_dtor(&tree);

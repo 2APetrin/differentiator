@@ -2,6 +2,7 @@
 #include "../tree/logs_header.h"
 #include "../diff_DSL/DSL_header.h"
 #include <math.h>
+#include "../latex/latex_header.h"
 
 
 int text_ctor(text_t * text, FILE * stream)
@@ -19,6 +20,9 @@ int text_ctor(text_t * text, FILE * stream)
     
     text->index = 0;
 
+    text->var_buff  = (var_t**) calloc (MAX_VAR_COUNT, sizeof(var_t*));
+    text->var_count = 0;
+
     fread(text->text_buff, sizeof(char), text->len, stream);
     text->text_buff[text->len] = '\0';
     
@@ -33,263 +37,27 @@ int text_dtor(text_t * text)
     ASSERT(text->text_buff);
 
     free(text->text_buff);
+    for (int i = 0; i < text->var_count; i++)
+    {
+        free(text->var_buff[i]->name);
+        free(text->var_buff[i]);
+    }
+
+    free(text->var_buff);
     text->len = 0;
 
     return 0;
 }
 
 
-int make_tree(tree_t * tree, text_t * text, read_mode mode)
-{
-    ASSERT(tree);
-    ASSERT(text);
-    ASSERT(text->text_buff);
-
-    int index = 0;
-
-    switch (mode)
-    {
-        case READ_PRE_ORDER:
-        {
-            node_t * root = create_subtree_pre_order(text, &index);
-            tree->root = root;
-        }
-            break;
-        
-        default:
-            return 1;
-    }
-
-    tree_dump(tree);
-
-    //printf("index - %d\nlen - %lu", index, text->len);
-
-    if (index != (int)text->len - 1)
-        fprintf(log_file, "<pre>\nERROR in make tree: not all symbols were read\n</pre>");
-
-    return 0;
-}
-
-
-node_t * create_subtree_pre_order(text_t * text, int * index) 
-{
-    ASSERT(text);
-
-    double num = NAN;
-    char cmd[8] = {0};
-    int length = 0;
-    int length_cmd = 0;
-
-    node_t * Lc = NULL;
-    node_t * Rc = NULL;
- 
-    sscanf(text->text_buff + *index, "%lg%n", &num, &length);
-    sscanf(text->text_buff + *index, "%[a-z^]%n", cmd, &length_cmd);
-    //printf("\nval - %lg\nlen - %d\n", num, length);
-    //printf("cmd - %s\nlen - %d\n", cmd, length_cmd);
-    
-    if (length)
-    {
-        *index += length;
-        if (text->text_buff[*index] == ')')
-            return new_num(num);
-
-        else
-        {
-            fprintf(log_file, "<pre>ERROR in create_subtree: there is no ) after num</pre>\n");
-            return NULL;
-        }
-    }
-
-    if (length_cmd)
-    {
-        *index += length_cmd;
-
-        if (text->text_buff[*index] == '(' && length_cmd > 1)
-        {
-            --(*index);
-            //printf("\ncmd detected\n");
-            node_type type = get_type_from_cmd(cmd);
-            //printf("type of cmd - %s\n", get_type(type));
-
-            switch (type)
-            {
-                case FUNC_LOG:
-                    Lc = NEXTsubtreePRE;
-                    Rc = NEXTsubtreePRE;
-                    ++(*index);
-
-                    if (Lc && Rc)
-                        return new_func(FUNC_LOG, Lc, Rc);
-
-                    fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: func_log (Lc && Rc) fail</pre>\n");
-                    return NULL;
-                
-                case FUNC_POW:
-                    Lc = NEXTsubtreePRE;
-                    Rc = NEXTsubtreePRE;
-                    ++(*index);
-
-                    if (Lc && Rc)
-                        return new_func(FUNC_POW, Lc, Rc);
-
-                    fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: func_pow (Lc && Rc) fail</pre>\n");
-                    return NULL;
-                
-                case FUNC_COS:
-                    Lc = NULL;
-                    Rc = NEXTsubtreePRE;
-                    ++(*index);
-
-                    if (Rc)
-                        return new_func(FUNC_COS, Lc, Rc);
-
-                    return NULL;
-                
-                case FUNC_SIN:
-                    Lc = NULL;
-                    Rc = NEXTsubtreePRE;
-                    ++(*index);
-
-                    if (Rc)
-                        return new_func(FUNC_SIN, Lc, Rc);
-
-                    fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: func_sin Rc fail</pre>\n");
-                    return NULL;
-                
-                case FUNC_LN:
-                    Lc = NULL;
-                    Rc = NEXTsubtreePRE;
-                    ++(*index);
-
-                    if (Rc)
-                        return new_func(FUNC_LN, Lc, Rc);
-
-                    return NULL;
-                
-                case FUNC_EXP:
-                    Lc = NULL;
-                    Rc = NEXTsubtreePRE;
-                    ++(*index);
-
-                    if (Rc)
-                        return new_func(FUNC_EXP, Lc, Rc);
-
-                    fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: func_exp Rc fail</pre>\n");
-                    return NULL;
-                
-                default:
-                    return NULL;
-            }
-        }
-
-        else if (length_cmd == 1)
-        {
-            if (cmd[0] == '^')
-            {
-                Lc = NEXTsubtreePRE;
-                Rc = NEXTsubtreePRE;
-                ++(*index);
-
-                //printf("%p %p\n", Lc, Rc);
-
-                if (Rc && Lc)
-                    return new_func(FUNC_POW, Lc, Rc);
-
-                return NULL;
-            }
-
-            else
-            {
-                //printf("\nпеременная - %c\n", cmd[0]);
-                //printf("\n%s\n", text->text_buff + *index);
-                return new_var(cmd[0]);
-            }
-        }
-        
-        else
-        {
-            fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: there is no ) after func</pre>\n");
-            return NULL;
-        }
-    }
-
-    switch (text->text_buff[*index])
-    {
-        case '(':
-            return NEXTsubtreePRE;
-        
-        case '+':
-            Lc = NEXTsubtreePRE;
-            Rc = NEXTsubtreePRE;
-            ++(*index);
-
-            if (Lc && Rc)
-                return new_op(OP_ADD, Lc, Rc);
-
-            return NULL;
-        
-        case '-':
-            Lc = NEXTsubtreePRE;
-            Rc = NEXTsubtreePRE;
-            ++(*index);
-
-            if (Lc && Rc)
-                return new_op(OP_SUB, Lc, Rc);
-            
-            return NULL;
-        
-        case '*':
-            Lc = NEXTsubtreePRE;
-            Rc = NEXTsubtreePRE;
-            ++(*index);
-
-            if (Lc && Rc)
-                return new_op(OP_MUL, Lc, Rc);
-            
-            return NULL;
-        
-        case '/':
-            Lc = NEXTsubtreePRE;
-            Rc = NEXTsubtreePRE;
-            ++(*index);
-
-            if (Lc && Rc)
-                return new_op(OP_DIV, Lc, Rc);
-            
-            return NULL;
-        
-        case ')':
-            fprintf(log_file, "<pre>ERROR in create_subtree_pre_order: switch catched ), index is %d\n</pre>", *index);
-            break;
-        
-        default:
-            fprintf(log_file, "<pre>\nunknown error in create_subtree_pre_order\n</pre>");
-    }
-
-    return NULL;
-}
-
-
 node_type get_type_from_cmd(char * cmd)
 {
-    if (!strcmp(cmd, "exp"))
-        return FUNC_EXP;
-    
-    if (!strcmp(cmd, "sin"))
-        return FUNC_SIN;
-    
-    if (!strcmp(cmd, "cos"))
-        return FUNC_COS;
-
-    if (!strcmp(cmd, "log"))
-        return FUNC_LOG;
-    
-    if (!strcmp(cmd, "ln"))
-        return FUNC_LN;
-    
-    if (!strcmp(cmd, "^"))
-        return FUNC_POW;
+    if (!strcmp(cmd, "exp")) return FUNC_EXP; 
+    if (!strcmp(cmd, "sin")) return FUNC_SIN;
+    if (!strcmp(cmd, "cos")) return FUNC_COS;
+    if (!strcmp(cmd, "log")) return FUNC_LOG;
+    if (!strcmp(cmd, "ln"))  return FUNC_LN;
+    if (!strcmp(cmd, "^"))   return FUNC_POW;
     
     return ERROR;
 }
@@ -297,20 +65,11 @@ node_type get_type_from_cmd(char * cmd)
 
 node_type get_type_from_word(char * word)
 {
-    if (!strcmp(word, "exp"))
-        return FUNC_EXP;
-    
-    if (!strcmp(word, "sin"))
-        return FUNC_SIN;
-    
-    if (!strcmp(word, "cos"))
-        return FUNC_COS;
-
-    if (!strcmp(word, "log"))
-        return FUNC_LOG;
-    
-    if (!strcmp(word, "ln"))
-        return FUNC_LN;
+    if (!strcmp(word, "exp")) return FUNC_EXP;
+    if (!strcmp(word, "sin")) return FUNC_SIN;
+    if (!strcmp(word, "cos")) return FUNC_COS;
+    if (!strcmp(word, "log")) return FUNC_LOG;
+    if (!strcmp(word, "ln"))  return FUNC_LN;
     
     return ERROR;
 }
@@ -514,7 +273,13 @@ node_t * copy_subtree(node_t * node)
     if (ret_node->right_child) ret_node->right_child->parent = ret_node;
     
     ret_node->type  = node->type;
-    ret_node->value = node->value;  
+    ret_node->value = node->value;
+
+    if (node->type == TYPE_VAR) 
+    {
+        ret_node->name = (char*) calloc (max_word_length, sizeof(char));
+        strcpy(ret_node->name, node->name);
+    }
 
     return ret_node;
 }
@@ -527,9 +292,10 @@ int make_tree_in_order(tree_t * tree, text_t * text)
     ASSERT(text->text_buff);
 
     tree->root = get_g(text);
-    
+
     tree_dump(tree);
     
+    if (!tree->root) return 1;
     return 0;
 }
 
@@ -677,12 +443,21 @@ node_t * get_w(text_t * text)
 
     if (type == ERROR)
     {
-        if (strlen(word) == 1 && isalpha(word[0]))
+        if (strlen(word) < max_word_length)
         {
-            return new_var(word[0]);
+            if (!check_for_that_var(text, word)) 
+            {
+                text->var_buff[text->var_count] = (var_t*) calloc (1, sizeof(var_t));
+                text->var_buff[text->var_count]->name = (char*) calloc (max_word_length, sizeof(char));
+                
+                strcpy(text->var_buff[text->var_count]->name, word);
+                text->var_count++;
+            }
+
+            return new_var(word);
         }
 
-        fprintf(log_file, "ERROR in get word. index - %d: lond wariable naming is not available - %s\n", text->index, word);
+        fprintf(log_file, "ERROR in get word. index - %d: long variable naming is not available - %s\n", text->index, word);
         return NULL;
     }
 
@@ -696,6 +471,17 @@ node_t * get_w(text_t * text)
 
     fprintf(log_file, "ERROR in get word. index - %d: unknown error. word - %s\n", text->index, word);
     return NULL;
+}
+
+
+int check_for_that_var(text_t * text, char * word)
+{
+    for (int i = 0; i < text->var_count; i++)
+    {
+        if (!strcmp(text->var_buff[i]->name, word)) return 1;
+    }
+
+    return 0;
 }
 
 
@@ -945,5 +731,71 @@ int subtree_simplify(node_t ** node)
         return 0;
     }
 
+    return 0;
+}
+
+
+int substitute_var(node_t* node, text_t* text)
+{
+    node_t* copied_tree = copy;
+    int flag = 0;
+
+    for (int i = 0; i < text->var_count; i++)
+    {
+        printf("Введите число для подстановки в переменную %s в производной\n'q' - для пропуска\n", text->var_buff[i]->name);
+        elem val = NAN;
+        if (!scanf("%lg", &val))
+        {
+            if (getchar() == 'q')
+            {
+                while (getchar() != '\n') continue;
+                continue;
+            }
+            printf("Неправильно, попробуй еще раз, только на этот раз подумай, угашенный блин!!!\n");
+            while (getchar() != '\n') continue;
+            i--;
+            continue;
+        }
+
+        change_var_to_val(text->var_buff[i]->name, &copied_tree, val);
+        flag = 1;
+    }
+    
+    if (flag)
+    {
+        fprintf(latex_file, "\n  \\section{Подставим введенное число в производную:}\n");
+        subtree_dump(copied_tree);
+        latex_write_subtree(copied_tree);
+
+        fprintf(latex_file, "\\text{Результат: }");
+        subtree_simplify(&copied_tree);
+        subtree_dump(copied_tree);
+        latex_write_subtree(copied_tree);
+    }
+    
+    tree_free(copied_tree);
+    return 0;
+}
+
+
+int change_var_to_val(const char* name, node_t** node, elem val)
+{
+    if (!(*node)) return 0;
+
+    CH_X_TO_VAL_L;
+    CH_X_TO_VAL_R;
+
+    if ((*node)->type == TYPE_VAR)
+    {
+        //printf("variable - %s, val - %lg\n", (*node)->name, val);
+        if (!strcmp((*node)->name, name))
+        {
+            (*node)->type  = TYPE_NUM;
+            (*node)->value = val;
+            free((*node)->name);
+        }
+
+        return 0;
+    }
     return 0;
 }

@@ -1,5 +1,6 @@
 #include "tree_header.h"
 #include "logs_header.h"
+#include "../diff/diff_header.h"
 
 
 int tree_ctor_(tree_t * tree, var_info info)
@@ -33,6 +34,7 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
 
         new_node->left_child  = NULL;
         new_node->right_child = NULL;
+        new_node->name        = NULL;
         
         new_node->type  = type;
         new_node->value = value;
@@ -56,6 +58,7 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
 
         new_node->right_child = node2;
         new_node->left_child  = node1;
+        new_node->name        = NULL;
 
         new_node->value = value;
         new_node->type  = type;
@@ -77,6 +80,7 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
 
         new_node->left_child  = NULL;
         new_node->right_child = NULL;
+        new_node->name        = NULL;
         
         new_node->value = value;
         new_node->type  = type;
@@ -96,6 +100,7 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
 
             new_node->left_child  = node1;
             new_node->right_child = node2;
+            new_node->name        = NULL;
 
             new_node->type  = type;
             new_node->value = null_val;
@@ -117,6 +122,7 @@ node_t * create_node(node_type type, elem value, node_t * node1, node_t * node2)
 
             new_node->left_child  = NULL;
             new_node->right_child = node2;
+            new_node->name        = NULL;
 
             new_node->type  = type;
             new_node->value = null_val;
@@ -168,6 +174,8 @@ int tree_free(node_t * node)
         tree_free(node->right_child);
     }
 
+    if (node->type == TYPE_VAR) free(node->name);
+
     free(node);
 
     return 0;
@@ -194,10 +202,9 @@ int delete_subtree(node_t * node)
     {
         node->parent->left_child = NULL;
         tree_free(node);
-
+        
         return 0;
     }
-
     else if (node->parent->right_child == node)
     {
         node->parent->right_child = NULL;
@@ -238,9 +245,15 @@ node_t * new_func(node_type type, node_t * Lc, node_t * Rc)
 }
 
 
-node_t * new_var(int name)
+node_t * new_var(char * name)
 {
-    return create_node(TYPE_VAR, name);
+    node_t* ret = create_node(TYPE_VAR, null_val);
+    ret->name = (char *) calloc(max_word_length, sizeof(char));
+    strncpy(ret->name, name, max_word_length-1);
+    //printf("%s\n", ret->name);
+    subtree_dump(ret);
+    
+    return ret;
 }
 
 

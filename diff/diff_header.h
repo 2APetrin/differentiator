@@ -2,21 +2,28 @@
 #include "../tree/tree_header.h"
 #include "ctype.h"
 
-//! @brief struct with our code
+
+const int MAX_VAR_COUNT = 10;
+
+//! @brief of variables
 //!
-typedef struct
-{
-    size_t len;         //length of reading file
-    char * text_buff;   //arrange with code
-    int    index;
-} text_t;
-
-
 typedef struct
 {
     char * name;
     elem   val;
 } var_t;
+
+
+//! @brief struct with our code
+//!
+typedef struct
+{
+    size_t  len;         //length of reading file
+    char *  text_buff;   //arrange with code
+    int     index;
+    int     var_count;
+    var_t** var_buff;
+} text_t;
 
 
 //! @brief types of tree reading modes
@@ -40,16 +47,6 @@ int text_ctor(text_t * text, FILE * stream);
 //! @brief frees allocated memory
 //!
 int text_dtor(text_t * text);
-
-
-//! @brief makes tree from text
-//!
-int make_tree(tree_t * tree, text_t * text, read_mode mode);
-
-
-//! @brief makes subtree
-//!
-node_t * create_subtree_pre_order(text_t * text, int * index);
 
 
 //! @brief makes subtree
@@ -137,3 +134,12 @@ int tree_simplify(tree_t * tree);
 int subtree_simplify(node_t ** node);
 
 
+//! @brief substitutes value into variable
+//!
+int substitute_var(node_t* node, text_t* text);
+
+
+int change_var_to_val(const char* name, node_t** node, elem val);
+
+
+int check_for_that_var(text_t * text, char * word);

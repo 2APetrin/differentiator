@@ -51,6 +51,7 @@ typedef struct node
     node *    parent;
     elem      value;
     node_type type;
+    char *    name;
 } node_t;
 
 
@@ -185,7 +186,7 @@ node_t * new_func(node_type type, node_t * Lc, node_t * Rc);
 
 //! @brief creates func node
 //!
-node_t * new_var(int name);
+node_t * new_var(char * name);
 
 
 //! @brief checks if doubles are equal

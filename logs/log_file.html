@@ -7,9 +7,9 @@
 dump from:
 file - tree/tree_functions.cpp
 func - int tree_ctor_(tree_t*, var_info)
-line - 16
+line - 17
 
-tree - 0x7ffea7d5d990
+tree - 0x7ffc2374b9c0
 root - (nil)
 </pre>
 
@@ -19,10 +19,10 @@ root - (nil)
     subtree dump
 dump from:
 file - tree/tree_functions.cpp
-func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 105
+func - node_t* new_var(char*)
+line - 254
 
-root - 0x6040000000d0
+root - 0x604000000010
 </pre>
 
 <img src="images/list_dump0.png" width="60%">
@@ -34,12 +34,54 @@ root - 0x6040000000d0
 dump from:
 file - tree/tree_functions.cpp
 func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 105
+line - 110
 
-root - 0x604000000110
+root - 0x604000000090
 </pre>
 
 <img src="images/list_dump1.png" width="60%">
+
+<pre>
+
+
+    subtree dump
+dump from:
+file - tree/tree_functions.cpp
+func - node_t* new_var(char*)
+line - 254
+
+root - 0x6040000000d0
+</pre>
+
+<img src="images/list_dump2.png" width="60%">
+
+<pre>
+
+
+    subtree dump
+dump from:
+file - tree/tree_functions.cpp
+func - node_t* create_node(node_type, elem, node_t*, node_t*)
+line - 110
+
+root - 0x604000000150
+</pre>
+
+<img src="images/list_dump3.png" width="60%">
+
+<pre>
+
+
+    subtree dump
+dump from:
+file - tree/tree_functions.cpp
+func - node_t* create_node(node_type, elem, node_t*, node_t*)
+line - 68
+
+root - 0x604000000190
+</pre>
+
+<img src="images/list_dump4.png" width="60%">
 
 <pre>
 
@@ -48,53 +90,9 @@ root - 0x604000000110
 dump from:
 file - diff/diff_functions.cpp
 func - int make_tree_in_order(tree_t*, text_t*)
-line - 531
+line - 296
 
-tree - 0x7ffea7d5d990
-root - 0x604000000110
-</pre>
-
-<img src="images/list_dump2.png" width="60%">
-
-<pre>
-
-
-    dump
-dump from:
-file - main.cpp
-func - int main()
-line - 24
-
-tree - 0x7ffea7d5d990
-root - 0x604000000110
-</pre>
-
-<img src="images/list_dump3.png" width="60%">
-
-<pre>
-
-
-    dump
-dump from:
-file - main.cpp
-func - int main()
-line - 31
-
-tree - 0x7ffea7d5d990
-root - 0x604000000110
-</pre>
-
-<img src="images/list_dump4.png" width="60%">
-
-<pre>
-
-
-    subtree dump
-dump from:
-file - tree/tree_functions.cpp
-func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 125
-
+tree - 0x7ffc2374b9c0
 root - 0x604000000190
 </pre>
 
@@ -103,13 +101,14 @@ root - 0x604000000190
 <pre>
 
 
-    subtree dump
+    dump
 dump from:
-file - tree/tree_functions.cpp
-func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 65
+file - main.cpp
+func - int main()
+line - 30
 
-root - 0x604000000290
+tree - 0x7ffc2374b9c0
+root - 0x604000000190
 </pre>
 
 <img src="images/list_dump6.png" width="60%">
@@ -117,13 +116,14 @@ root - 0x604000000290
 <pre>
 
 
-    subtree dump
+    dump
 dump from:
-file - tree/tree_functions.cpp
-func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 65
+file - main.cpp
+func - int main()
+line - 37
 
-root - 0x6040000002d0
+tree - 0x7ffc2374b9c0
+root - 0x604000000190
 </pre>
 
 <img src="images/list_dump7.png" width="60%">
@@ -135,9 +135,9 @@ root - 0x6040000002d0
 dump from:
 file - tree/tree_functions.cpp
 func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 65
+line - 68
 
-root - 0x6040000003d0
+root - 0x6040000002d0
 </pre>
 
 <img src="images/list_dump8.png" width="60%">
@@ -149,9 +149,9 @@ root - 0x6040000003d0
 dump from:
 file - tree/tree_functions.cpp
 func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 125
+line - 110
 
-root - 0x604000000450
+root - 0x604000000350
 </pre>
 
 <img src="images/list_dump9.png" width="60%">
@@ -163,9 +163,9 @@ root - 0x604000000450
 dump from:
 file - tree/tree_functions.cpp
 func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 65
+line - 68
 
-root - 0x604000000590
+root - 0x604000000390
 </pre>
 
 <img src="images/list_dump10.png" width="60%">
@@ -177,9 +177,9 @@ root - 0x604000000590
 dump from:
 file - tree/tree_functions.cpp
 func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 105
+line - 68
 
-root - 0x604000000610
+root - 0x6040000003d0
 </pre>
 
 <img src="images/list_dump11.png" width="60%">
@@ -191,9 +191,9 @@ root - 0x604000000610
 dump from:
 file - tree/tree_functions.cpp
 func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 65
+line - 68
 
-root - 0x604000000650
+root - 0x604000000510
 </pre>
 
 <img src="images/list_dump12.png" width="60%">
@@ -205,9 +205,9 @@ root - 0x604000000650
 dump from:
 file - tree/tree_functions.cpp
 func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 65
+line - 110
 
-root - 0x604000000690
+root - 0x604000000590
 </pre>
 
 <img src="images/list_dump13.png" width="60%">
@@ -219,9 +219,9 @@ root - 0x604000000690
 dump from:
 file - tree/tree_functions.cpp
 func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 65
+line - 68
 
-root - 0x6040000006d0
+root - 0x6040000005d0
 </pre>
 
 <img src="images/list_dump14.png" width="60%">
@@ -233,9 +233,9 @@ root - 0x6040000006d0
 dump from:
 file - tree/tree_functions.cpp
 func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 65
+line - 68
 
-root - 0x604000000710
+root - 0x604000000610
 </pre>
 
 <img src="images/list_dump15.png" width="60%">
@@ -247,9 +247,9 @@ root - 0x604000000710
 dump from:
 file - tree/tree_functions.cpp
 func - node_t* create_node(node_type, elem, node_t*, node_t*)
-line - 65
+line - 68
 
-root - 0x604000000890
+root - 0x604000000650
 </pre>
 
 <img src="images/list_dump16.png" width="60%">
@@ -261,9 +261,9 @@ root - 0x604000000890
 dump from:
 file - main.cpp
 func - int main()
-line - 37
+line - 43
 
-root - 0x604000000890
+root - 0x604000000650
 </pre>
 
 <img src="images/list_dump17.png" width="60%">
@@ -275,11 +275,39 @@ root - 0x604000000890
 dump from:
 file - main.cpp
 func - int main()
-line - 41
+line - 47
 
-root - 0x604000000890
+root - 0x604000000650
 </pre>
 
 <img src="images/list_dump18.png" width="60%">
+
+<pre>
+
+
+    subtree dump
+dump from:
+file - diff/diff_functions.cpp
+func - int substitute_var(node_t*, text_t*)
+line - 767
+
+root - 0x604000000910
+</pre>
+
+<img src="images/list_dump19.png" width="60%">
+
+<pre>
+
+
+    subtree dump
+dump from:
+file - diff/diff_functions.cpp
+func - int substitute_var(node_t*, text_t*)
+line - 772
+
+root - 0x604000000b50
+</pre>
+
+<img src="images/list_dump20.png" width="60%">
 
 </html>

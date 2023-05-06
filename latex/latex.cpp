@@ -44,7 +44,6 @@ int init_latex_file(void)
     \n\\usepackage{textcomp}\
     \n\\usepackage{graphicx}\
     \n\\usepackage{marvosym}\
-    \n\\usepackage[14pt]{extsizes}\n\
     \n\\setlength{\\topmargin}{-0.5in}\
     \n\\setlength{\\textheight}{9.1in}\
     \n\\setlength{\\oddsidemargin}{-0.4in}\
@@ -52,6 +51,7 @@ int init_latex_file(void)
     \n\\setlength{\\textwidth}{7in}\
     \n\\setlength{\\parindent}{0ex}\
     \n\\setlength{\\parskip}{1ex}\n\
+    \n\\DeclareMathSizes{10}{20}{18}{16}\n\
     \n\\begin{document}\
     \n  \\title{история взятия одной маленькой производной}\
     \n  \\date{}\
@@ -94,8 +94,13 @@ int latex_print_in_order(node_t * node)
 
     switch (node->type)
     {
-        case TYPE_VAR: fprintf(latex_file, "%c", (int) node->value); return 0;
-        case TYPE_NUM: fprintf(latex_file, "%lg", node->value);      return 0;
+        case TYPE_VAR:
+            if (node->name) 
+                fprintf(latex_file, "%s",  node->name);
+                return 0;
+            return 0;
+
+        case TYPE_NUM: fprintf(latex_file, "%lg", node->value); return 0;
 
         case OP_ADD:
             PRINT_LC;

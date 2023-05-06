@@ -29,3 +29,6 @@
 
 #define LEFT_VAL_IS(num)  (equald((*node)->left_child->value, (num)))
 #define RIGHT_VAL_IS(num) (equald((*node)->right_child->value, (num)))
+
+#define CH_X_TO_VAL_L change_var_to_val(name, &(*node)->left_child, val) 
+#define CH_X_TO_VAL_R change_var_to_val(name, &(*node)->right_child, val) 

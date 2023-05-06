@@ -102,7 +102,7 @@ int graphviz_add_node(node_t * node)
     ASSERT(graphviz_file);
 
     if (node->type == TYPE_VAR)
-        fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {parent - %p} | {%s} | {%c} | {%p|%p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, node->parent, get_type(node->type), (int)node->value, node->left_child, node->right_child, (unsigned) get_color(node->type));    
+        fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {parent - %p} | {%s} | {%s} | {%p|%p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, node->parent, get_type(node->type), node->name, node->left_child, node->right_child, (unsigned) get_color(node->type));    
     
     else if (node->type > TYPE_VAR)
         fprintf(graphviz_file, "    node_%p[shape = Mrecord, label = \"{{%p} | {parent - %p} | {%s} | {%p|%p}}\", style = \"filled\", fillcolor = \"#%X\"];\n", node, node, node->parent, get_type(node->type), node->left_child, node->right_child, (unsigned) get_color(node->type));    
