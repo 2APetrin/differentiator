@@ -9,7 +9,7 @@ int graphviz_png_count = 0;
 
 int open_log_file(void)
 {
-    if ((log_file = fopen("logs/log_file.html", "w")) == NULL)
+    if ((log_file = fopen("logs/log_file.html", "w")) == nullptr)
     {
         printf("Cannot open log_file. Programm shutdown\n");
         return 1;
@@ -33,7 +33,7 @@ int close_log_file(void)
 
 int open_graphviz_file(void)
 {
-    if ((graphviz_file = fopen("logs/log_graphviz.dot", "w")) == NULL)
+    if ((graphviz_file = fopen("logs/log_graphviz.dot", "w")) == nullptr)
     {
         printf("Cannot open graphviz file. Programm shutdown\n");
         return 1;
@@ -81,13 +81,13 @@ int init_graphviz_file(void)
 
 int node_print(node_t * node)
 {
-    if (node == NULL)
+    if (node == nullptr)
         return 1;
 
-    if (node->left_child != NULL)
+    if (node->left_child != nullptr)
         node_print(node->left_child);
 
-    if (node->right_child != NULL)
+    if (node->right_child != nullptr)
         node_print(node->right_child);
     
     graphviz_add_node(node);
@@ -127,16 +127,16 @@ int link_nodes(node_t * node1, node_t * node2, int color)
 
 int node_link(node_t * node)
 {
-    if (node == NULL)
+    if (node == nullptr)
         return 1;
 
-    if (node->left_child != NULL)
+    if (node->left_child != nullptr)
     {
         link_nodes(node, node->left_child, RED);
         node_link(node->left_child);
     }
 
-    if (node->right_child != NULL)
+    if (node->right_child != nullptr)
     {
         link_nodes(node, node->right_child, RED);
         node_link(node->right_child);
@@ -148,7 +148,7 @@ int node_link(node_t * node)
 
 int tree_print_dump(node_t * root)
 {
-    if (root == NULL)
+    if (root == nullptr)
     {
         return 1;
     }
@@ -268,10 +268,10 @@ const char * get_type(node_type type)
             return "error";
 
         default:
-            return NULL;
+            return nullptr;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -280,7 +280,7 @@ int subtree_dump_(node_t * root, location_info info)
     ASSERT(info.file);
     ASSERT(info.func);
 
-    if (root == NULL)
+    if (root == nullptr)
         return 0;
 
     fprintf(log_file, "\n<pre>\n\n\n    subtree dump\ndump from:\nfile - %s\nfunc - %s\nline - %lu\n\nroot - %p\n</pre>\n", info.file, info.func, info.line, root);
@@ -293,7 +293,7 @@ int subtree_dump_(node_t * root, location_info info)
 
 int subtree_print(node_t * node, print_mode mode, FILE * out_stream)
 {
-    if (node == NULL)
+    if (node == nullptr)
         return 1;
 
     switch (mode)
@@ -323,7 +323,7 @@ int print_in_order(node_t * node, FILE * out_stream)
 {
     fprintf(out_stream, "(");
 
-    if (node->left_child != NULL)
+    if (node->left_child != nullptr)
     {
         if (node->type == FUNC_LOG)
         {
@@ -350,7 +350,7 @@ int print_in_order(node_t * node, FILE * out_stream)
         fprintf(out_stream, "%c", (int)node->value);
     }
 
-    if (node->right_child != NULL)
+    if (node->right_child != nullptr)
     {
         print_in_order(node->right_child, out_stream);
     }
@@ -378,12 +378,12 @@ int print_pre_order(node_t * node, FILE * out_stream)
         fprintf(out_stream, "%c", (int)node->value);
     }
 
-    if (node->left_child != NULL)
+    if (node->left_child != nullptr)
     {
         print_pre_order(node->left_child, out_stream);
     }
 
-    if (node->right_child != NULL)
+    if (node->right_child != nullptr)
     {
         print_pre_order(node->right_child, out_stream);
     }
@@ -397,12 +397,12 @@ int print_post_order(node_t * node, FILE * out_stream)
 {
     fprintf(out_stream, "(");
 
-    if (node->left_child != NULL)
+    if (node->left_child != nullptr)
     {
         print_post_order(node->left_child, out_stream);
     }
 
-    if (node->right_child != NULL)
+    if (node->right_child != nullptr)
     {
         print_post_order(node->right_child, out_stream);
     }
@@ -430,7 +430,7 @@ int tree_print(tree_t * tree, print_mode mode, FILE * out_stream)
 {
     ASSERT(tree);
 
-    if (tree->root == NULL)
+    if (tree->root == nullptr)
         return 1;
 
     subtree_print(tree->root, mode, out_stream);
@@ -441,12 +441,12 @@ int tree_print(tree_t * tree, print_mode mode, FILE * out_stream)
 
 FILE * open_code_file(void)
 {
-    FILE * fp = NULL;
+    FILE * fp = nullptr;
     
     if (!(fp = fopen("code.txt", "r")))
     {
         printf("Cannot open code_file\n");
-        return NULL;
+        return nullptr;
     }
 
     return fp;

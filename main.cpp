@@ -20,6 +20,7 @@ int main(void)
 
     tree_t tree = {};
     tree_ctor(&tree);
+
     if (make_tree_in_order(&tree, &text))
     {
         tree_dtor(&tree);
@@ -38,7 +39,6 @@ int main(void)
     latex_write_subtree(tree.root);
 
     fprintf(latex_file, "\n  \\section{Потом у нее появился друг, ее производная:}\n");
-
     node_t * diff_tree = diff(tree.root);
     subtree_dump(diff_tree);
     latex_write_subtree(diff_tree);

@@ -131,7 +131,7 @@ int tree_ctor_(tree_t * tree, var_info info);
 //!
 //! @return ptr to created node
 //!
-node_t * create_node(node_type type, elem value, node_t * node1 = NULL, node_t * node2 = NULL);
+node_t * create_node(node_type type, elem value, node_t * node1 = nullptr, node_t * node2 = nullptr);
 
 
 //! @brief destructs tree

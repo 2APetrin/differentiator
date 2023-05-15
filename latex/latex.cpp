@@ -2,12 +2,12 @@
 #include "../tree/tree_header.h"
 #include "../tree/logs_header.h"
 
-FILE* latex_file = NULL;
+FILE* latex_file = nullptr;
 
 
 int open_latex_file(void)
 {
-    if ((latex_file = fopen("latex.tex", "w")) == NULL)
+    if ((latex_file = fopen("latex.tex", "w")) == nullptr)
     {
         printf("Cannot open latex file. Programm shutdown\n\\n");
         return 1;
@@ -95,9 +95,8 @@ int latex_print_in_order(node_t * node)
     switch (node->type)
     {
         case TYPE_VAR:
-            if (node->name) 
+            if (node->name)
                 fprintf(latex_file, "%s",  node->name);
-                return 0;
             return 0;
 
         case TYPE_NUM: fprintf(latex_file, "%lg", node->value); return 0;

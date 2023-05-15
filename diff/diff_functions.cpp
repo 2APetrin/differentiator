@@ -1,8 +1,8 @@
 #include "diff_header.h"
 #include "../tree/logs_header.h"
 #include "../diff_DSL/DSL_header.h"
-#include <math.h>
 #include "../latex/latex_header.h"
+#include <math.h>
 
 
 int text_ctor(text_t * text, FILE * stream)
@@ -36,14 +36,22 @@ int text_dtor(text_t * text)
     ASSERT(text);
     ASSERT(text->text_buff);
 
+    for (int i = 0; i < (int)text->len; i++) 
+       text->text_buff[i] = 0;
+
     free(text->text_buff);
+    text->text_buff = nullptr;
+    
     for (int i = 0; i < text->var_count; i++)
     {
         free(text->var_buff[i]->name);
+        text->var_buff[i]->name = nullptr;
         free(text->var_buff[i]);
+        text->var_buff[i] = nullptr;
     }
 
     free(text->var_buff);
+    text->var_buff = nullptr;
     text->len = 0;
 
     return 0;
@@ -58,18 +66,6 @@ node_type get_type_from_cmd(char * cmd)
     if (!strcmp(cmd, "log")) return FUNC_LOG;
     if (!strcmp(cmd, "ln"))  return FUNC_LN;
     if (!strcmp(cmd, "^"))   return FUNC_POW;
-    
-    return ERROR;
-}
-
-
-node_type get_type_from_word(char * word)
-{
-    if (!strcmp(word, "exp")) return FUNC_EXP;
-    if (!strcmp(word, "sin")) return FUNC_SIN;
-    if (!strcmp(word, "cos")) return FUNC_COS;
-    if (!strcmp(word, "log")) return FUNC_LOG;
-    if (!strcmp(word, "ln"))  return FUNC_LN;
     
     return ERROR;
 }
@@ -208,12 +204,12 @@ elem eval(node_t * node)
 node_t * diff(node_t * node)
 {
     if (!node)
-        return NULL;
+        return nullptr;
     
     switch (node->type)
     {
         case ERROR:
-            return NULL;
+            return nullptr;
         
         case TYPE_NUM: return new_num(0);
         case OP_ADD:   return ADD(LC, RC);
@@ -243,6 +239,9 @@ node_t * diff(node_t * node)
 
             if (POW_OF_X)
                 return MUL(MUL(POW(copyL, SUB(copyR, new_num(1))), copyR), LC);
+            
+            fprintf(log_file, "<pre>\nERROR in diff function. Unknown command\n</pre>");
+            return nullptr;
         }
 
         case FUNC_SIN: return MUL(COS(copyR), RC);
@@ -252,17 +251,29 @@ node_t * diff(node_t * node)
 
         default:
             fprintf(log_file, "<pre>\nERROR in diff function. Unknown command\n</pre>");
-            return NULL;
+            return nullptr;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 
-node_t * copy_subtree(node_t * node)
+node_type get_type_from_word(char * word)
+{
+    if (!strcmp(word, "exp")) return FUNC_EXP;
+    if (!strcmp(word, "sin")) return FUNC_SIN;
+    if (!strcmp(word, "cos")) return FUNC_COS;
+    if (!strcmp(word, "log")) return FUNC_LOG;
+    if (!strcmp(word, "ln"))  return FUNC_LN;
+    
+    return ERROR;
+}
+
+
+node_t* copy_subtree(node_t * node)
 {
     if (!node)
-        return NULL;
+        return nullptr;
     
     node_t * ret_node = (node_t *) calloc (1, sizeof(node_t));
 
@@ -309,7 +320,7 @@ node_t * get_g(text_t * text)
     {
         fprintf(log_file, "<pre>\nERROR: index %d. Expexted $, but is: %c\n</pre>", text->index, text->text_buff[text->index]);
         tree_free(node);
-        return NULL;
+        return nullptr;
     }
 
     text->index++;
@@ -333,7 +344,7 @@ node_t * get_e(text_t * text)
         else    
         {
             fprintf(log_file, "<pre>\nERROR: index %d. Expexted + or -, but is: %c\n</pre>", text->index, op);
-            return NULL;
+            return nullptr;
         }
 
     }
@@ -358,7 +369,7 @@ node_t * get_t(text_t * text)
         else    
         {
             fprintf(log_file, "<pre>\nERROR: index %d. Expexted * or /, but is: %c\n</pre>", text->index, op);
-            return NULL;
+            return nullptr;
         }
     }    
 
@@ -393,7 +404,7 @@ node_t * get_p(text_t * text)
         if (text->text_buff[text->index] != ')')
         {
             fprintf(log_file, "<pre>\nERROR: index %d. Expexted ) but is: %c\n</pre>", text->index, text->text_buff[text->index]);
-            return NULL;
+            return nullptr;
         }
 
         text->index++;
@@ -407,7 +418,7 @@ node_t * get_p(text_t * text)
     else
         return get_w(text);
     
-    return NULL;
+    return nullptr;
 }
 
 
@@ -423,7 +434,7 @@ node_t * get_w(text_t * text)
         if (count == max_word_length - 1)
         {
             fprintf(log_file, "ERROR in getting, index - %d: word is too long - %s\n", text->index, word);
-            return NULL;
+            return nullptr;
         }
 
         word[count] = text->text_buff[text->index];
@@ -434,7 +445,7 @@ node_t * get_w(text_t * text)
     if (p == text->index)
     {
         fprintf(log_file, "ERROR in getting word: nothing was read. And it is not a number too. Index - %d\n", text->index);
-        return NULL;
+        return nullptr;
     }    
 
     node_type type = get_type_from_word(word);
@@ -458,7 +469,7 @@ node_t * get_w(text_t * text)
         }
 
         fprintf(log_file, "ERROR in get word. index - %d: long variable naming is not available - %s\n", text->index, word);
-        return NULL;
+        return nullptr;
     }
 
     if (type == FUNC_LOG)
@@ -467,10 +478,10 @@ node_t * get_w(text_t * text)
         return new_func(type, node1, get_p(text));
     }
 
-    return new_func(type, NULL, get_p(text)); 
+    return new_func(type, nullptr, get_p(text)); 
 
     fprintf(log_file, "ERROR in get word. index - %d: unknown error. word - %s\n", text->index, word);
-    return NULL;
+    return nullptr;
 }
 
 
@@ -520,7 +531,7 @@ node_t * get_n(text_t * text)
             if (!(text->text_buff[text->index + 1] >= '0' && text->text_buff[text->index + 1] <= '9'))
             {
                 fprintf(log_file, "\nERROR: index - %d, After . expected number. But get %c\n", text->index, text->text_buff[text->index + 1]);
-                return NULL;
+                return nullptr;
             }
             
             text->index++;
@@ -531,7 +542,7 @@ node_t * get_n(text_t * text)
     //printf("%lg\n", val);
 
     if (p == text->index)
-        return NULL;
+        return nullptr;
 
     if (equald(0.0, val))
         return new_num(0.0);
@@ -782,8 +793,8 @@ int change_var_to_val(const char* name, node_t** node, elem val)
 {
     if (!(*node)) return 0;
 
-    CH_X_TO_VAL_L;
-    CH_X_TO_VAL_R;
+    CH_X_TO_VAL_L();
+    CH_X_TO_VAL_R();
 
     if ((*node)->type == TYPE_VAR)
     {
